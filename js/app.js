@@ -393,7 +393,7 @@ async function renderOTTable(selectedMonth) {
                         <button type="button" class="btn ${btnClass} btn-sm rounded-circle btn-edit-ot" 
                                 data-date="${isoDate}" 
                                 data-id="${otItem ? otItem.id : ''}" 
-                                style="width: 26px; height: 26px; padding: 0;" 
+                                style="width: 30px; height: 30px; padding: 0;" 
                                 title="แก้ไข/เพิ่ม OT">
                             <i class="fa-solid fa-pen-to-square" style="font-size: 0.7rem; pointer-events: none; position: relative; top: -1px;"></i>
                         </button>
