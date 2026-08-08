@@ -33,8 +33,6 @@ body {
     #otDataTable tbody td:nth-child(3),
     #otDataTable tbody td:nth-child(3) span {
         font-size: 0.62rem !important; /* ย่อฟอนต์เวลาลงอีกนิด */
-        padding-left: 0.5px !important;
-        padding-right: 0.5px !important;
         letter-spacing: -0.3px !important; /* บีบระยะห่างระหว่างตัวเลข */
     }
 
