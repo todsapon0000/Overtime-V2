@@ -301,7 +301,7 @@ async function renderOTTable(selectedMonth) {
             }
         </style>
         <div class="table-responsive">
-            <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table" style="zoom:90%">
+            <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table" style="font-size: 0.82rem !important;">
                 <thead class="table-light text-muted small align-middle">
                     <tr>
                         <th rowspan="2" class="text-start align-middle" style="width: 12%;">
