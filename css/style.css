@@ -28,25 +28,7 @@ body {
     }
 }
 
-/* 📱 บีบความกว้างคอลัมน์ In และ Out ให้แคบลง */
-@media (max-width: 768px) {
-    /* คอลัมน์ที่ 2 (In) และคอลัมน์ที่ 3 (Out) */
-    #otDataTable th:nth-child(2),
-    #otDataTable td:nth-child(2),
-    #otDataTable th:nth-child(3),
-    #otDataTable td:nth-child(3) {
-        width: 12% !important; /* ย่อความกว้างลง */
-        padding-left: 1px !important;
-        padding-right: 1px !important;
-    }
-    
-    /* ย่อขนาดตัวอักษรของเวลาด้านในให้พอดีช่อง */
-    #otDataTable td:nth-child(2) span,
-    #otDataTable td:nth-child(3) span {
-        font-size: 0.65rem !important; 
-        letter-spacing: -0.3px; /* บีบระยะห่างตัวอักษรเล็กน้อย */
-    }
-}
+
 
 /* 📱 ย่อตัวหนังสือคอลัมน์ 1 (Date), คอลัมน์ 2 (In + span ข้างใน), คอลัมน์ 3 (Out + span ข้างใน) */
 #otDataTable tbody td:nth-child(1),
