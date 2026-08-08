@@ -38,7 +38,7 @@ body {
     /* 1. คอลัมน์ In & Out: บีบความกว้างลงเล็กน้อย */
     #otDataTable th:nth-child(2), #otDataTable td:nth-child(2),
     #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) {
-        width: 11% !important;
+        width: 12% !important;
         padding-left: 1px !important;
         padding-right: 1px !important;
     }
@@ -58,7 +58,7 @@ body {
     }
 
     /* 4. คอลัมน์ Date & บาท: ขยายพื้นที่ที่เหลือให้กว้างขึ้น อ่านง่าย */
-    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) { width: 33% !important; } /* Date */
+    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) { width: 25% !important; } /* Date */
     #otDataTable th:nth-child(9), #otDataTable td:nth-child(9) { width: 27% !important; } /* บาท */
 }
 
