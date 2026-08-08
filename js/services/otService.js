@@ -2,9 +2,13 @@ const otService = {
     collectionName: 'Overtime',
 
     // ดึงข้อมูล OT ตามงวดเดือน (month_round)
+    // ใน js/services/otService.js
     async getRecordsByMonth(monthRound) {
+        const cacheKey = `ot_cache_month_${monthRound}`;
+
         try {
-            const snapshot = await db.collection(this.collectionName)
+            // 1. ยิงไปขอข้อมูลจาก Firebase (ถ้าเปิด Persistence ไว้ มันจะอ่านจาก Disk Cache ก่อนเร็วมาก)
+            const snapshot = await db.collection('ot_records')
                 .where('month_round', '==', parseInt(monthRound))
                 .get();
 
@@ -12,10 +16,21 @@ const otService = {
             snapshot.forEach(doc => {
                 records.push({ id: doc.id, ...doc.data() });
             });
+
+            // 2. เซฟลง localStorage สำรองไว้อีกชั้น
+            localStorage.setItem(cacheKey, JSON.stringify(records));
+            this.cachedRecords = records; // เซฟลง RAM
+
             return { success: true, data: records };
         } catch (error) {
             console.error("Error fetching OT records:", error);
-            return { success: false, error: error.message };
+            
+            // ถ้า Network มีปัญหา ให้ดึงจาก localStorage ออกมาแทน
+            const localData = localStorage.getItem(cacheKey);
+            if (localData) {
+                return { success: true, data: JSON.parse(localData) };
+            }
+            return { success: false, error: error.message, data: [] };
         }
     },
 

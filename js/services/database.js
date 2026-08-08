@@ -18,4 +18,14 @@ if (!firebase.apps.length) {
 }
 
 // สร้างตัวแปร db สำหรับเรียกใช้ Firestore ใน otService.js และ app.js
+// ใน js/services/database.js
 const db = firebase.firestore();
+
+// ⚡ เปิดใช้งาน Offline Persistence (ดึงข้อมูลจาก Cache ในเครื่องเร็วทันที 0ms)
+db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+    if (err.code === 'failed-precondition') {
+        console.warn('Persistence failed: Multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+        console.warn('Persistence not supported by browser');
+    }
+});

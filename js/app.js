@@ -249,7 +249,25 @@ async function renderOTTable(selectedMonth) {
         $('#otDataTable').DataTable().destroy();
     }
 
+    // ใน renderOTTable(selectedMonth)
     let currentMonth = parseInt(selectedMonth) || getCurrentOTMonth();
+    const cacheKey = `ot_cache_month_${currentMonth}`;
+
+    // ⚡ FAST-PATH: ถ้ามีข้อมูลใน Cache เครื่อง ให้เอามาโชว์ทันทีก่อน ไม่ต้องหมุนรอ
+    const localCache = localStorage.getItem(cacheKey);
+    if (localCache) {
+        try {
+            const cachedList = JSON.parse(localCache);
+            // เรียกฟังก์ชันวาดตารางด้วยข้อมูล cachedList ทันที (0ms)
+            buildTableDOM(cachedList, currentMonth); 
+        } catch(e) {}
+    }
+
+    // 🔄 BACKGROUND-SYNC: ดึงข้อมูลจริงจาก Firebase มาอัปเดตตารางอีกรอบ
+    const response = await otService.getRecordsByMonth(currentMonth);
+    if (response.success) {
+        buildTableDOM(response.data, currentMonth); // อัปเดตตารางเป็นข้อมูลล่าสุด
+    }
 
     try {
         let firestoreDataList = [];
