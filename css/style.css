@@ -28,10 +28,12 @@ body {
     }
 }
 
-/* 📱 ย่อขนาดตัวอักษรเฉพาะคอลัมน์แรก (วันที่) */
-#otDataTable tbody td:first-child {
-    font-size: 0.68rem !important; /* Adjust size here (e.g. 0.65rem - 0.7rem) */
-    white-space: nowrap;          /* Prevent date text from wrapping */
+/* 📱 ย่อขนาดตัวอักษรเฉพาะคอลัมน์ที่ 1 (Date), 2 (In), และ 3 (Out) */
+#otDataTable tbody td:nth-child(1),
+#otDataTable tbody td:nth-child(2),
+#otDataTable tbody td:nth-child(3) {
+    font-size: 0.68rem !important; /* ปรับขนาดตามต้องการ (เช่น 0.65rem - 0.7rem) */
+    white-space: nowrap;          /* ป้องกันข้อความตกบรรทัด */
 }
 
 /* 🔍 ย่อขนาดตัวหนังสือในช่องค้นหา Date ตรงหัวตาราง */
