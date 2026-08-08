@@ -28,39 +28,10 @@ body {
     }
 }
 
-/* 📱 ย่อขนาดตัวหนังสือและความกว้างเฉพาะช่อง "รวม ชม." โดยไม่กระทบช่อง "บาท" */
-@media (max-width: 768px) {
 
-    /* 1. ย่อตัวหนังสือเฉพาะช่อง "รวม ชม." (คอลัมน์ที่ 8) */
-    #otDataTable tbody td:nth-child(8),
-    #otDataTable tbody td:nth-child(8) span {
-        font-size: 0.65rem !important; /* ปรับย่อขนาดชั่วโมง */
-        padding-left: 1px !important;
-        padding-right: 1px !important;
-    }
-
-    /* 2. บีบความกว้างช่อง "รวม ชม." ให้แคบลงลงตัว */
-    #otDataTable th:nth-child(8), 
-    #otDataTable td:nth-child(8) { 
-        width: 8% !important; 
-    }
-
-    /* 3. คงความกว้างและขนาดตัวอักษรของช่อง "รวม บาท" (คอลัมน์ที่ 9) ไว้ชัดเจน */
-    #otDataTable th:nth-child(9), 
-    #otDataTable td:nth-child(9) { 
-        width: 24% !important; 
-    }
-    #otDataTable tbody td:nth-child(9) span {
-        font-size: 0.75rem !important; /* ยอดเงินยังคงชัดเจน อ่านง่าย */
-    }
-}
 
 /* 📱 ย่อตัวหนังสือคอลัมน์ 1 (Date), คอลัมน์ 2 (In + span ข้างใน), คอลัมน์ 3 (Out + span ข้างใน) */
-#otDataTable tbody td:nth-child(1),
-#otDataTable tbody td:nth-child(2),
-#otDataTable tbody td:nth-child(2) span,
-#otDataTable tbody td:nth-child(3),
-#otDataTable tbody td:nth-child(3) span {
+#otDataTable tbody td {
     font-size: 0.68rem !important; /* ปรับขนาดตามต้องการได้เลย เช่น 0.65rem */
     white-space: nowrap;
 }
