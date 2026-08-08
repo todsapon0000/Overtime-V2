@@ -21,6 +21,7 @@ const otService = {
             localStorage.setItem(cacheKey, JSON.stringify(records));
             this.cachedRecords = records; // เซฟลง RAM
 
+            console.log("🟢 ดึงข้อมูลสำเร็จจาก Firebase:", records); // 🔍 เช็กว่ามีข้อมูลออกมาไหม
             return { success: true, data: records };
         } catch (error) {
             console.error("Error fetching OT records:", error);
