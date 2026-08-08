@@ -36,9 +36,21 @@ body {
     white-space: nowrap;
 }
 
-#otDataTable tbody th:nth-child(1),
-#otDataTable tbody td:nth-child(1) {
-    width: 15% !important;
+#otDataTable th:first-child,
+#otDataTable td:first-child {
+    width: 15% !important; /* ย่อความกว้างลง */
+    min-width: 0 !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+
+/* 2. คอลัมน์สุดท้าย (Action) */
+#otDataTable th:last-child,
+#otDataTable td:last-child {
+    width: 8% !important; /* ย่อความกว้างลงเหลือพอดีปุ่ม */
+    min-width: 0 !important;
+    padding-left: 1px !important;
+    padding-right: 1px !important;
 }
 
 /* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
