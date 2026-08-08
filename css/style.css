@@ -36,6 +36,10 @@ body {
     white-space: nowrap;
 }
 
+#otDataTable tbody td:nth-child(1) {
+    width: 20% !important;
+}
+
 /* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
 .table-responsive {
     overflow-x: hidden !important; /* ⚡ ปิดการเลื่อนซ้าย-ขวาเด็ดขาด */
