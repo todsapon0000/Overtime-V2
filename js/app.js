@@ -383,8 +383,8 @@ async function renderOTTable(selectedMonth) {
             tableHTML += `
                 <tr class="${trClass}">
                     <td class="text-start ps-3 fw-bold text-nowrap" style="font-size: 0.8rem;">${dateStr}</td>
-                    <td class="text-muted">${inTime}</td>
-                    <td class="text-muted">${outTime}</td>
+                    <td class="text-muted" style="font-size: 0.8rem;">${inTime}</td>
+                    <td class="text-muted" style="font-size: 0.8rem;">${outTime}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot15H}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot15B}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot30H}</td>
