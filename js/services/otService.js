@@ -1,0 +1,85 @@
+const otService = {
+    collectionName: 'Overtime',
+
+    // ดึงข้อมูล OT ตามงวดเดือน (month_round)
+    async getRecordsByMonth(monthRound) {
+        try {
+            const snapshot = await db.collection(this.collectionName)
+                .where('month_round', '==', parseInt(monthRound))
+                .get();
+
+            const records = [];
+            snapshot.forEach(doc => {
+                records.push({ id: doc.id, ...doc.data() });
+            });
+            return { success: true, data: records };
+        } catch (error) {
+            console.error("Error fetching OT records:", error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // ดึงข้อมูลตาม Document ID (สำหรับเปิดแก้ไข)
+    async getRecordById(docId) {
+        try {
+            const doc = await db.collection(this.collectionName).doc(docId).get();
+            if (doc.exists) {
+                return { success: true, data: { id: doc.id, ...doc.data() } };
+            }
+            return { success: false, error: "Record not found" };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    },
+
+    // บันทึกข้อมูลใหม่
+    async addRecord(data) {
+        try {
+            const docRef = await db.collection(this.collectionName).add({
+                ...data,
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    },
+
+    // อัปเดตข้อมูลเดิม
+    async updateRecord(docId, data) {
+        try {
+            await db.collection(this.collectionName).doc(docId).update({
+                ...data,
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    },
+
+    // 🟢 เพิ่มฟังก์ชันดึงข้อมูล OT ทั้งหมดเพื่อทำรายงานสรุป
+    async getAllRecords() {
+        try {
+            const snapshot = await db.collection(this.collectionName).get();
+            const list = [];
+            snapshot.forEach(doc => {
+                list.push({ id: doc.id, ...doc.data() });
+            });
+            return { success: true, data: list };
+        } catch (error) {
+            console.error("Error fetching all records:", error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async deleteRecord(docId) {
+        try {
+            await db.collection(this.collectionName).doc(docId).delete();
+            return { success: true };
+        } catch (error) {
+            console.error("Error deleting OT record:", error);
+            return { success: false, error: error.message };
+        }
+    }
+};

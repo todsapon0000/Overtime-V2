@@ -1,0 +1,85 @@
+/* ==========================================
+   1. Base & Layout
+========================================== */
+:root {
+    --sidebar-width: 220px;
+}
+
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background-color: #f8f9fa; 
+}
+
+.sidebar { 
+    --bs-offcanvas-width: 180px; 
+    min-height: 100vh; 
+    background-color: #ffffff; 
+    border-right: 1px solid #dee2e6; 
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        width: var(--sidebar-width) !important;
+        flex-shrink: 0; 
+    }
+    .main-content-wrapper {
+        width: calc(100% - var(--sidebar-width));
+        flex-grow: 1;
+    }
+}
+
+/* ==========================================
+   2. Components & UI 
+========================================== */
+.hero-bg { 
+    background: linear-gradient(135deg, #1e40af 0%, #002e6d 100%); 
+    color: white; 
+}
+
+.profile-floating { 
+    margin-top: -3rem; 
+    z-index: 10;
+}
+
+.avatar-circle { 
+    width: 50px; 
+    height: 50px; 
+    background-color: #6c757d; 
+    color: white; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+}
+
+/* ==========================================
+   3. Utilities & Interactions
+========================================== */
+.cursor-pointer {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-5px);
+}
+
+.btnclear {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btnclear:hover {
+    transform: rotate(-90deg);
+    color: #dc3545 !important;
+}
+
+.hide {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.hide:hover {
+    transform: translateY(-2px);
+}
