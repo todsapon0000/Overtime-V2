@@ -33,14 +33,14 @@ body {
     #otDataTable tbody td:nth-child(3),
     #otDataTable tbody td:nth-child(3) span {
         font-size: 0.62rem !important; /* ย่อฟอนต์เวลาลงอีกนิด */
-        padding-left: 1px !important;
-        padding-right: 1px !important;
+        padding-left: 0.5px !important;
+        padding-right: 0.5px !important;
         letter-spacing: -0.3px !important; /* บีบระยะห่างระหว่างตัวเลข */
     }
 
     /* 2. ปรับความกว้าง % ของช่อง In และ Out ให้เหลือเพียง 10% */
-    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 10% !important; } /* In */
-    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 10% !important; } /* Out */
+    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 5% !important; } /* In */
+    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 5% !important; } /* Out */
 
 }
 
