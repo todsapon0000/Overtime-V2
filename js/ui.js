@@ -116,10 +116,10 @@ async function handleRouting() {
 // 📱 ปิด Preloader นุ่มๆ
 function hidePreloader() {
     const preloader = document.getElementById('pagePreloader');
-    if (preloader) {
+    if (preloader && !preloader.classList.contains('d-none')) {
         preloader.style.opacity = '0';
         setTimeout(() => {
-            preloader.style.display = 'none';
+            preloader.classList.add('d-none');
         }, 300);
     }
 }

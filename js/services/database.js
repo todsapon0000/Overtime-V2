@@ -18,14 +18,4 @@ if (!firebase.apps.length) {
 }
 
 // สร้างตัวแปร db สำหรับเรียกใช้ Firestore ใน otService.js และ app.js
-// ใน js/services/database.js
 const db = firebase.firestore();
-
-// 🟢 ใช้คำสั่งดักจับ persistence พื้นฐานเพื่อหลีกเลี่ยง Warning
-db.enablePersistence().catch((err) => {
-    if (err.code === 'failed-precondition') {
-        console.warn('Persistence failed: Multiple tabs open');
-    } else if (err.code === 'unimplemented') {
-        console.warn('Persistence not supported');
-    }
-});
