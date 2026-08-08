@@ -36,6 +36,11 @@ body {
     }
 
     /* 1. คอลัมน์ In & Out: บีบความกว้างลงเล็กน้อย */
+    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) {
+        width: 30% !important;
+    }
+
+    /* 1. คอลัมน์ In & Out: บีบความกว้างลงเล็กน้อย */
     #otDataTable th:nth-child(2), #otDataTable td:nth-child(2),
     #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) {
         width: 12% !important;
