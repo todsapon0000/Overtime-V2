@@ -310,8 +310,8 @@ async function renderOTTable(selectedMonth) {
                                        placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
                             
                         </th>
-                        <th rowspan="2" class="text-center" style="width: 80%;">In</th>
-                        <th rowspan="2" class="text-center" style="width: 80%;">Out</th>
+                        <th rowspan="2" class="text-center" style="width: 5%;">In</th>
+                        <th rowspan="2" class="text-center" style="width: 5%;">Out</th>
                         <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 1.5</th>
                         <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 3.0</th>
                         <th rowspan="2" class="text-center d-none d-lg-table-cell align-middle text-nowrap">ค่าข้าว</th>
