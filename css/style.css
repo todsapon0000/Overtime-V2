@@ -28,7 +28,39 @@ body {
     }
 }
 
+/* 📱 ปรับกระชับคอลัมน์ In, Out, ชม., Action ลงนิดเดียว */
+@media (max-width: 768px) {
+    #otDataTable {
+        table-layout: fixed !important;
+        width: 100% !important;
+    }
 
+    /* 1. คอลัมน์ In & Out: บีบความกว้างลงเล็กน้อย */
+    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2),
+    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) {
+        width: 11% !important;
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+    }
+
+    /* 2. คอลัมน์ ชม. (รวมชั่วโมง): บีบความกว้างลงเล็กน้อย */
+    #otDataTable th:nth-child(8), #otDataTable td:nth-child(8) {
+        width: 10% !important;
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+    }
+
+    /* 3. คอลัมน์ Action (ปุ่มแก้ไข): บีบความกว้างให้พอดีปุ่ม */
+    #otDataTable th:nth-child(10), #otDataTable td:nth-child(10) {
+        width: 8% !important;
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+    }
+
+    /* 4. คอลัมน์ Date & บาท: ขยายพื้นที่ที่เหลือให้กว้างขึ้น อ่านง่าย */
+    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) { width: 33% !important; } /* Date */
+    #otDataTable th:nth-child(9), #otDataTable td:nth-child(9) { width: 27% !important; } /* บาท */
+}
 
 /* 📱 ย่อตัวหนังสือคอลัมน์ 1 (Date), คอลัมน์ 2 (In + span ข้างใน), คอลัมน์ 3 (Out + span ข้างใน) */
 #otDataTable tbody td:nth-child(1),
