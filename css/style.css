@@ -17,7 +17,10 @@ body {
     border-right: 1px solid #dee2e6; 
 }
 
-@media (min-width: 768px) {
+
+/* 📱 ปรับแต่งตาราง OT สำหรับหน้าจอมือถือโดยเฉพาะ */
+@media (max-width: 768px) {
+
     .sidebar {
         width: var(--sidebar-width) !important;
         flex-shrink: 0; 
@@ -25,6 +28,33 @@ body {
     .main-content-wrapper {
         width: calc(100% - var(--sidebar-width));
         flex-grow: 1;
+    }
+
+    /* กำหนดให้ตารางแสดงผลกว้างพอดีจอ 100% */
+    #otDataTable {
+        width: 100% !important;
+        font-size: 0.72rem !important; /* ย่อตัวหนังสือลงอีกนิดให้ลงตัว */
+    }
+
+    /* บีบ Padding ซ้าย-ขวาของทุกคอลัมน์ให้เหลือแค่ 2px */
+    #otDataTable th, 
+    #otDataTable td {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+
+    /* ย่อปุ่ม Action แก้ไข ให้เล็กกะทัดรัด */
+    #otDataTable .btn-edit-ot {
+        width: 22px !important;
+        height: 22px !important;
+        line-height: 22px !important;
+    }
+
+    /* ปรับแต่งส่วนหัว Date */
+    #otDataTable th:first-child {
+        padding-left: 4px !important;
     }
 }
 
@@ -83,3 +113,4 @@ body {
 .hide:hover {
     transform: translateY(-2px);
 }
+
