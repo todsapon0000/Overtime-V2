@@ -52,7 +52,7 @@ body {
 
     /* 3. คอลัมน์ Action (ปุ่มแก้ไข): บีบความกว้างให้พอดีปุ่ม */
     #otDataTable th:nth-child(10), #otDataTable td:nth-child(10) {
-        width: 8% !important;
+        width: 15% !important;
         padding-left: 1px !important;
         padding-right: 1px !important;
     }
