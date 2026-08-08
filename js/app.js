@@ -340,7 +340,7 @@ async function renderOTTable(selectedMonth) {
             const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
             const dayNumber = String(currentDate.getDate()).padStart(2, '0');
-            const dateStr = `${days[dayOfWeek]} ${dayNumber} ${months[currentDate.getMonth()]}`;
+            const dateStr = `${dayNumber} ${months[currentDate.getMonth()]}`;
             const isoDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(currentDate.getDate()).padStart(2,'0')}`;
 
             const otItem = firestoreDataList.find(item => item.date === isoDate);
