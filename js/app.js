@@ -305,11 +305,10 @@ async function renderOTTable(selectedMonth) {
                 <thead class="table-light text-muted small align-middle">
                     <tr>
                         <th rowspan="2" class="text-start align-middle" style="width: 8%;">
-                            <div class="input-group input-group-sm">
                                 
                                 <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
                                        placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
-                            </div>
+                            
                         </th>
                         <th rowspan="2" class="text-center">In</th>
                         <th rowspan="2" class="text-center">Out</th>
