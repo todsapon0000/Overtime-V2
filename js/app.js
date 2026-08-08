@@ -304,7 +304,7 @@ async function renderOTTable(selectedMonth) {
             <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table">
                 <thead class="table-light text-muted small align-middle">
                     <tr>
-                        <th rowspan="2" class="text-start align-middle" style="width: 12%;">
+                        <th rowspan="2" class="text-start align-middle" style="width: 8%;">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-white text-muted border-end-0 px-2">
                                     <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem;"></i>
@@ -451,7 +451,6 @@ async function renderOTTable(selectedMonth) {
                     info: false,
                     ordering: false,
                     dom: 't',
-                    autoWidth: false,
                     orderCellsTop: true,
                     language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
                 });
