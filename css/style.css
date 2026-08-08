@@ -45,9 +45,6 @@ body {
     #otDataTable th:last-child,
     #otDataTable td:last-child {
         width: 12% !important; /* ย่อความกว้างลงเหลือพอดีปุ่ม */
-        min-width: 0 !important;
-        padding-left: 1px !important;
-        padding-right: 1px !important;
     }
 
 }
