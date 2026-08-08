@@ -429,9 +429,13 @@ async function renderOTTable(selectedMonth) {
                 }
             }
 
+            // 🟢 1. คำนวณและแปลงฟอร์แมตตัวเลขก่อนเป็นอันดับแรก
+            const formattedTotal = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const homeValue = `THB ${formattedTotal}`;
+
+            // 🟢 2. อัปเดตฝั่ง Home (ยุบรวมโค้ดให้สะอาด ไร้การเขียนซ้ำ)
             const homeAmountEl = document.getElementById('homeAmountValue');
             if (homeAmountEl) {
-                const homeValue = `THB ${formattedTotal}`;
                 homeAmountEl.setAttribute('data-value', homeValue);
                 
                 // ถ้าหน้า Home เปิดตาอยู่อยู่แล้ว ให้เปลี่ยนตัวเลขทันที
@@ -439,13 +443,6 @@ async function renderOTTable(selectedMonth) {
                 if (homeEyeIcon && homeEyeIcon.classList.contains('fa-eye-slash')) {
                     homeAmountEl.textContent = homeValue;
                 }
-            }
-
-            // ใน renderOTTable() ตอนคำนวณเงินเสร็จ
-            const formattedTotal = totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            if (homeAmountEl) {
-                homeAmountEl.setAttribute('data-value', `THB ${formattedTotal}`);
             }
 
             if (window.jQuery && $.fn.DataTable) {
