@@ -2028,7 +2028,7 @@ function renderNextPay() {
 }
 
 // ==========================================
-// 📊 ฟังก์ชันประกอบ และเรนเดอร์ตาราง OT (buildTableDOM)
+// 📊 ฟังก์ชันสำหรับสร้างและเรนเดอร์ตาราง OT
 // ==========================================
 function buildTableDOM(firestoreDataList, selectedMonth) {
     const tableContainer = document.getElementById('tableContainer');
@@ -2183,7 +2183,6 @@ function buildTableDOM(firestoreDataList, selectedMonth) {
 
     tableHTML += `</tbody></table></div>`;
 
-    // เรนเดอร์ HTML ลง DOM
     tableContainer.innerHTML = tableHTML;
 
     // อัปเดตชั่วโมงรวม
@@ -2192,12 +2191,11 @@ function buildTableDOM(firestoreDataList, selectedMonth) {
         totalHoursEl.innerHTML = `${totalHoursSum.toFixed(1)} <span class="fs-6 text-muted fw-normal">Hrs</span>`;
     }
 
-    // อัปเดตยอดเงินรวมหน้า OT
+    // อัปเดตยอดเงินรวม
     const formattedTotal = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const amountValueEl = document.getElementById('amountValue');
     if (amountValueEl) {
         amountValueEl.setAttribute('data-value', formattedTotal);
-
         const eyeIcon = document.querySelector('#ot-view .hide');
         if (eyeIcon && eyeIcon.classList.contains('fa-eye-slash')) {
             amountValueEl.textContent = formattedTotal;
@@ -2217,7 +2215,7 @@ function buildTableDOM(firestoreDataList, selectedMonth) {
         }
     }
 
-    // ผูก DataTable
+    // DataTable
     const table = $('#otDataTable').DataTable({
         paging: false,
         info: false,
@@ -2233,7 +2231,7 @@ function buildTableDOM(firestoreDataList, selectedMonth) {
         table.column(0).search(searchValue).draw();
     });
 
-    // ผูกปุ่มแก้ไข/เพิ่ม OT
+    // ปุ่มแก้ไข/เพิ่ม OT
     document.querySelectorAll('.btn-edit-ot').forEach(btn => {
         btn.addEventListener('click', function() {
             const dateVal = this.getAttribute('data-date');

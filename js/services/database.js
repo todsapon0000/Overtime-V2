@@ -21,11 +21,11 @@ if (!firebase.apps.length) {
 // ใน js/services/database.js
 const db = firebase.firestore();
 
-// ⚡ เปิดใช้งาน Offline Persistence (ดึงข้อมูลจาก Cache ในเครื่องเร็วทันที 0ms)
-db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+// 🟢 ใช้คำสั่งดักจับ persistence พื้นฐานเพื่อหลีกเลี่ยง Warning
+db.enablePersistence().catch((err) => {
     if (err.code === 'failed-precondition') {
         console.warn('Persistence failed: Multiple tabs open');
     } else if (err.code === 'unimplemented') {
-        console.warn('Persistence not supported by browser');
+        console.warn('Persistence not supported');
     }
 });
