@@ -38,6 +38,23 @@ body {
     white-space: nowrap;
 }
 
+/* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
+.table-responsive {
+    overflow-x: hidden !important; /* ⚡ ปิดการเลื่อนซ้าย-ขวาเด็ดขาด */
+}
+
+#otDataTable {
+    width: 100% !important;
+    table-layout: fixed !important; /* ⚡ บังคับล็อกคอลัมน์ให้อยู่ภายในกรอบจอ */
+}
+
+#otDataTable th, 
+#otDataTable td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* 🔍 ย่อขนาดตัวหนังสือในช่องค้นหา Date ตรงหัวตาราง */
 #dateSearchInput {
     font-size: 0.68rem !important;
