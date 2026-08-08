@@ -17,7 +17,7 @@ body {
     border-right: 1px solid #dee2e6; 
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
     .sidebar {
         width: var(--sidebar-width) !important;
         flex-shrink: 0; 
@@ -44,7 +44,7 @@ body {
     /* 2. คอลัมน์สุดท้าย (Action) */
     #otDataTable th:last-child,
     #otDataTable td:last-child {
-        width: 15% !important; /* ย่อความกว้างลงเหลือพอดีปุ่ม */
+        width: 12% !important; /* ย่อความกว้างลงเหลือพอดีปุ่ม */
         min-width: 0 !important;
         padding-left: 1px !important;
         padding-right: 1px !important;
