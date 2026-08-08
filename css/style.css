@@ -31,7 +31,7 @@ body {
 
 
 /* 📱 ย่อตัวหนังสือคอลัมน์ 1 (Date), คอลัมน์ 2 (In + span ข้างใน), คอลัมน์ 3 (Out + span ข้างใน) */
-#otDataTable tbody td {
+#otDataTable tbody th td {
     font-size: 0.68rem !important; /* ปรับขนาดตามต้องการได้เลย เช่น 0.65rem */
     white-space: nowrap;
 }
