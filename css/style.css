@@ -17,7 +17,7 @@ body {
     border-right: 1px solid #dee2e6; 
 }
 
-@media (min-width: 800px) {
+@media (min-width: 768px) {
     .sidebar {
         width: var(--sidebar-width) !important;
         flex-shrink: 0; 
