@@ -28,6 +28,39 @@ body {
     }
 }
 
+/* 📱 บังคับตาราง OT ไม่ให้ล้นจอมือถือเด็ดขาด */
+@media (max-width: 768px) {
+    #otDataTable {
+        table-layout: fixed !important; /* ⚡ บังคับล็อกความกว้างคอลัมน์ตาม % ไม่ให้ยืดล้นจอ */
+        width: 100% !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* บีบ Padding ทุกเซลล์ให้ชิดขึ้น */
+    #otDataTable th, 
+    #otDataTable td {
+        padding: 5px 1px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 🎯 ล็อกสัดส่วนความกว้าง 6 คอลัมน์บนมือถือให้รวมกันได้ 100% พอดี */
+    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) { width: 30% !important; } /* Date */
+    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 14% !important; } /* In */
+    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 14% !important; } /* Out */
+    #otDataTable th:nth-child(8), #otDataTable td:nth-child(8) { width: 10% !important; } /* รวม ชม. */
+    #otDataTable th:nth-child(9), #otDataTable td:nth-child(9) { width: 22% !important; } /* รวม บาท */
+    #otDataTable th:nth-child(10), #otDataTable td:nth-child(10) { width: 10% !important; } /* Action */
+
+    /* ปรับปุ่มแก้ไขให้เล็กพอดีช่อง */
+    #otDataTable .btn-edit-ot {
+        width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        font-size: 0.6rem !important;
+    }
+}
+
 /* ==========================================
    2. Components & UI 
 ========================================== */

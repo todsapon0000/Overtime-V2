@@ -451,6 +451,7 @@ async function renderOTTable(selectedMonth) {
                     info: false,
                     ordering: false,
                     dom: 't',
+                    autoWidth: false,
                     orderCellsTop: true,
                     language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
                 });
