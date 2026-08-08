@@ -234,259 +234,198 @@ async function openEditOTModal(dateStr, docId = null) {
     }
 }
 
+// 🟢 วางทับ renderOTTable ใน js/app.js
 async function renderOTTable(selectedMonth) {
     const tableContainer = document.getElementById('tableContainer');
     if (!tableContainer) return;
 
-    tableContainer.innerHTML = `
-        <div class="text-center py-5 text-muted">
-            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
-            <div class="small">กำลังโหลดข้อมูล OT...</div>
-        </div>
-    `;
+    let currentMonth = parseInt(selectedMonth) || getCurrentOTMonth();
 
-    if (window.jQuery && $.fn.DataTable && $.fn.DataTable.isDataTable('#otDataTable')) {
+    // 1. ดึงข้อมูล OT จาก Firebase
+    const response = await otService.getRecordsByMonth(currentMonth);
+    const firestoreDataList = response.success ? response.data : [];
+
+    // 2. ล้าง DataTables ตัวเก่าถ้ามี
+    if ($.fn.DataTable.isDataTable('#otDataTable')) {
         $('#otDataTable').DataTable().destroy();
     }
 
-    let currentMonth = parseInt(selectedMonth) || getCurrentOTMonth();
-
-    try {
-        let firestoreDataList = [];
-        if (typeof otService !== 'undefined' && typeof otService.getRecordsByMonth === 'function') {
-            const response = await otService.getRecordsByMonth(currentMonth);
-            firestoreDataList = response.success ? response.data : [];
-        }
-
-        const year = new Date().getFullYear();
-        let prevMonth = currentMonth - 1;
-        let prevYear = year;
-
-        if (prevMonth === 0) {
-            prevMonth = 12;
-            prevYear--;
-        }
-
-        const startDate = new Date(prevYear, prevMonth - 1, 21);
-        const endDate = new Date(year, currentMonth - 1, 20);
-
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const thShortMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-        const thMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-
-        const rangeText = `21 ${thShortMonths[prevMonth - 1]} - 20 ${thShortMonths[currentMonth - 1]}`;
-        
-        let lastDateOfPayment = new Date(year, currentMonth, 0);
-        let dayOfWeekPayment = lastDateOfPayment.getDay();
-        if (dayOfWeekPayment === 0) lastDateOfPayment.setDate(lastDateOfPayment.getDate() - 2);
-        else if (dayOfWeekPayment === 6) lastDateOfPayment.setDate(lastDateOfPayment.getDate() - 1);
-        
-        const paymentDateText = `เงินออก ${lastDateOfPayment.getDate()} ${thMonths[lastDateOfPayment.getMonth()]}`;
-
-        const otRangeTextEl = document.getElementById('otRangeText');
-        const otPaymentDateTextEl = document.getElementById('otPaymentDateText');
-        if (otRangeTextEl) otRangeTextEl.textContent = rangeText;
-        if (otPaymentDateTextEl) otPaymentDateTextEl.textContent = paymentDateText;
-
-        let totalHoursSum = 0;
-        let totalAmountSum = 0;
-
-        let tableHTML = `
-        <style>
-            .custom-border-table th, 
-            .custom-border-table td { 
-                border-right: 1px solid #dee2e6 !important;
-                border-bottom: 1px solid #dee2e6 !important;
-            }
-        </style>
-        <div class="table-responsive">
-            <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table">
-                <thead class="table-light text-muted small align-middle">
-                    <tr>
-                        <th rowspan="2" class="text-start align-middle" style="width: 8%;">
-                                
-                                <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
-                                       placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
-                            
-                        </th>
-                        <th rowspan="2" class="text-center" style="width: 5%;">In</th>
-                        <th rowspan="2" class="text-center" style="width: 5%;">Out</th>
-                        <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 1.5</th>
-                        <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 3.0</th>
-                        <th rowspan="2" class="text-center d-none d-lg-table-cell align-middle text-nowrap">ค่าข้าว</th>
-                        <th colspan="2" class="border-bottom text-center">รวม</th>
-                        <th rowspan="2" class="text-center px-2" style="width: 50px; max-width: 50px; font-size: 0.75rem;">Action</th>
-                    </tr>
-                    <tr>
-                        <th class="d-none d-lg-table-cell text-center">ชม.</th>
-                        <th class="d-none d-lg-table-cell text-center">บาท</th>
-                        <th class="d-none d-lg-table-cell text-center">ชม.</th>
-                        <th class="d-none d-lg-table-cell text-center">บาท</th>
-                        <th class="text-center">ชม.</th>
-                        <th class="text-center">บาท</th>
-                    </tr>
-                </thead>
-                <tbody class="small">
-        `;
-
-        let currentDate = new Date(startDate);
-
-        while (currentDate <= endDate) {
-            const dayOfWeek = currentDate.getDay();
-            const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-
-            const dayNumber = String(currentDate.getDate()).padStart(2, '0');
-            const dateStr = `${dayNumber} ${months[currentDate.getMonth()]}`;
-            const isoDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(currentDate.getDate()).padStart(2,'0')}`;
-
-            const otItem = firestoreDataList.find(item => item.date === isoDate);
-
-            let inTime = '-', outTime = '-';
-            let ot15H = '-', ot15B = '-', ot30H = '-', ot30B = '-', mealB = '-', totalH = '-', totalB = '-';
-            let btnClass = 'btn-outline-primary';
-
-            if (otItem) {
-                const textStyle = 'font-size: 0.65rem;';
-
-                inTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_in}</span>`;
-                outTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_out}</span>`;
-
-                if (otItem.ot_1_5_hours > 0) {
-                    ot15H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_1_5_hours.toFixed(1)}</span>`;
-                    ot15B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_1_5_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
-                }
-
-                if (otItem.ot_3_0_hours > 0) {
-                    ot30H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_3_0_hours.toFixed(1)}</span>`;
-                    ot30B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_3_0_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
-                }
-
-                if (otItem.meal_amount > 0) {
-                    mealB = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.meal_amount.toLocaleString('en-US')}</span>`;
-                }
-
-                totalH = `<span class="text-warning fw-bold" style="${textStyle}">${(otItem.total_hours || 0).toFixed(1)}</span>`;
-                totalB = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
-
-                btnClass = 'btn-warning text-white border-0 shadow-sm';
-                
-                totalHoursSum += otItem.total_hours || 0;
-                totalAmountSum += otItem.total_amount || 0;
-            }
-
-            const trClass = isWeekend ? 'bg-light' : '';
-
-            tableHTML += `
-                <tr class="${trClass}">
-                    <td class="text-start fw-bold text-nowrap" style="font-size: 0.8rem;">${dateStr}</td>
-                    <td class="text-muted" style="font-size: 0.65rem;">${inTime}</td>
-                    <td class="text-muted" style="font-size: 0.65rem;">${outTime}</td>
-                    <td class="text-muted d-none d-lg-table-cell">${ot15H}</td>
-                    <td class="text-muted d-none d-lg-table-cell">${ot15B}</td>
-                    <td class="text-muted d-none d-lg-table-cell">${ot30H}</td>
-                    <td class="text-muted d-none d-lg-table-cell">${ot30B}</td>
-                    <td class="text-muted d-none d-lg-table-cell">${mealB}</td>
-                    <td class="text-muted">${totalH}</td>
-                    <td class="text-muted">${totalB}</td>
-                    <td class="text-center px-2">
-                        <button type="button" class="btn ${btnClass} btn-sm rounded-circle btn-edit-ot" 
-                                data-date="${isoDate}" 
-                                data-id="${otItem ? otItem.id : ''}" 
-                                style="width: 26px; height: 26px; padding: 0;" 
-                                title="แก้ไข/เพิ่ม OT">
-                            <i class="fa-solid fa-pen-to-square" style="font-size: 0.7rem; pointer-events: none; position: relative; top: -1px;"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        tableHTML += `</tbody></table></div>`;
-
-        const renderContent = () => {
-            tableContainer.innerHTML = tableHTML;
-
-            const totalHoursEl = document.querySelector('#ot-view .text-warning');
-            if (totalHoursEl) {
-                totalHoursEl.innerHTML = `${totalHoursSum.toFixed(1)} <span class="fs-6 text-muted fw-normal">Hrs</span>`;
-            }
-
-            const amountValueEl = document.getElementById('amountValue');
-            if (amountValueEl) {
-                const formattedAmount = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                amountValueEl.setAttribute('data-value', formattedAmount);
-
-                const eyeIcon = document.querySelector('#ot-view .hide');
-                if (eyeIcon && eyeIcon.classList.contains('fa-eye-slash')) {
-                    amountValueEl.textContent = formattedAmount;
-                } else {
-                    amountValueEl.textContent = 'XX.XX';
-                }
-            }
-
-            // 🟢 1. คำนวณและแปลงฟอร์แมตตัวเลขก่อนเป็นอันดับแรก
-            const formattedTotal = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const homeValue = `THB ${formattedTotal}`;
-
-            // 🟢 2. อัปเดตฝั่ง Home (ยุบรวมโค้ดให้สะอาด ไร้การเขียนซ้ำ)
-            const homeAmountEl = document.getElementById('homeAmountValue');
-            if (homeAmountEl) {
-                homeAmountEl.setAttribute('data-value', homeValue);
-                
-                // ถ้าหน้า Home เปิดตาอยู่อยู่แล้ว ให้เปลี่ยนตัวเลขทันที
-                const homeEyeIcon = document.getElementById('homeEyeIcon');
-                if (homeEyeIcon && homeEyeIcon.classList.contains('fa-eye-slash')) {
-                    homeAmountEl.textContent = homeValue;
-                }
-            }
-
-            if (window.jQuery && $.fn.DataTable) {
-                const table = $('#otDataTable').DataTable({
-                    paging: false,
-                    info: false,
-                    ordering: false,
-                    dom: 't',
-                    scrollX: false, // ⚡ ปิดการสกรอลล์แนวนอนของ DataTables
-                    orderCellsTop: true,
-                    language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
-                });
-
-                $('#dateSearchInput').off('input').on('input', function() {
-                    let searchValue = this.value.trim();
-                    if (/^\d$/.test(searchValue)) searchValue = '0' + searchValue;
-                    table.column(0).search(searchValue).draw();
-                });
-            }
-
-            tableContainer.onclick = function(e) {
-                const btn = e.target.closest('.btn-edit-ot');
-                if (btn) {
-                    e.preventDefault();
-                    const dateVal = btn.getAttribute('data-date');
-                    const docId = btn.getAttribute('data-id');
-                    if (typeof openEditOTModal === 'function') {
-                        openEditOTModal(dateVal, docId);
-                    }
-                }
-            };
-        };
-
-        if (typeof smoothRender === 'function') {
-            smoothRender(tableContainer, renderContent);
-        } else {
-            renderContent();
-        }
-
-    } catch (error) {
-        console.error("Render OT Table Error:", error);
-        tableContainer.innerHTML = `
-            <div class="text-center text-danger py-4 small">
-                เกิดข้อผิดพลาดในการโหลดข้อมูล OT: ${error.message}
-            </div>
-        `;
+    // 3. คำนวณช่วงวันที่ (21 เดือนก่อน - 20 เดือนปัจจุบัน)
+    const year = new Date().getFullYear();
+    let prevMonth = currentMonth - 1;
+    let prevYear = year;
+    if (prevMonth === 0) {
+        prevMonth = 12;
+        prevYear--;
     }
+
+    const startDate = new Date(prevYear, prevMonth - 1, 21);
+    const endDate = new Date(year, currentMonth - 1, 20);
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const thShortMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    const thMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+
+    const rangeText = `21 ${thShortMonths[prevMonth - 1]} - 20 ${thShortMonths[currentMonth - 1]}`;
+    let lastDateOfPayment = new Date(year, currentMonth, 0);
+    let dayOfWeekPayment = lastDateOfPayment.getDay();
+    if (dayOfWeekPayment === 0) lastDateOfPayment.setDate(lastDateOfPayment.getDate() - 2);
+    else if (dayOfWeekPayment === 6) lastDateOfPayment.setDate(lastDateOfPayment.getDate() - 1);
+    const paymentDateText = `เงินออก ${lastDateOfPayment.getDate()} ${thMonths[lastDateOfPayment.getMonth()]}`;
+
+    const otRangeTextEl = document.getElementById('otRangeText');
+    const otPaymentDateTextEl = document.getElementById('otPaymentDateText');
+    if (otRangeTextEl) otRangeTextEl.textContent = rangeText;
+    if (otPaymentDateTextEl) otPaymentDateTextEl.textContent = paymentDateText;
+
+    let totalHoursSum = 0;
+    let totalAmountSum = 0;
+
+    // 4. ประกอบ HTML ตาราง
+    let tableHTML = `
+    <div class="table-responsive">
+        <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table">
+            <thead class="table-light text-muted small align-middle">
+                <tr>
+                    <th rowspan="2" class="text-start align-middle p-0" style="width: 25%;">
+                        <input type="text" id="dateSearchInput" class="form-control form-control-sm border-0 p-1 text-center fw-bold" 
+                               placeholder="🔍 Date" style="font-size: 0.65rem; background: transparent; box-shadow: none;">
+                    </th>
+                    <th rowspan="2" class="text-center" style="width: 5%;">In</th>
+                    <th rowspan="2" class="text-center" style="width: 8%;">Out</th>
+                    <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 1.5</th>
+                    <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 3.0</th>
+                    <th colspan="2" class="border-bottom text-center">รวม</th>
+                    <th rowspan="2" class="text-center px-1" style="width: 8%;">Action</th>
+                </tr>
+                <tr>
+                    <th class="d-none d-lg-table-cell text-center">ชม.</th>
+                    <th class="d-none d-lg-table-cell text-center">บาท</th>
+                    <th class="d-none d-lg-table-cell text-center">ชม.</th>
+                    <th class="d-none d-lg-table-cell text-center">บาท</th>
+                    <th class="text-center">ชม.</th>
+                    <th class="text-center">บาท</th>
+                </tr>
+            </thead>
+            <tbody class="small">
+    `;
+
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const dayNumber = String(currentDate.getDate()).padStart(2, '0');
+        
+        // 🟢 แสดงเฉพาะ Day + Month (เช่น 21 Dec, 24 Jul)
+        const dateStr = `${dayNumber} ${months[currentDate.getMonth()]}`;
+        const isoDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(currentDate.getDate()).padStart(2,'0')}`;
+
+        const otItem = firestoreDataList.find(item => item.date === isoDate);
+
+        let inTime = '-', outTime = '-';
+        let ot15H = '-', ot15B = '-', ot30H = '-', ot30B = '-', totalH = '-', totalB = '-';
+        let btnClass = 'btn-outline-primary';
+
+        if (otItem) {
+            // 🟢 ย่อขนาดฟอนต์ In / Out ลงเหลือ 0.65rem
+            const textStyle = 'font-size: 0.65rem;';
+
+            inTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_in}</span>`;
+            outTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_out}</span>`;
+
+            if (otItem.ot_1_5_hours > 0) {
+                ot15H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_1_5_hours.toFixed(1)}</span>`;
+                ot15B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_1_5_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+            }
+
+            if (otItem.ot_3_0_hours > 0) {
+                ot30H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_3_0_hours.toFixed(1)}</span>`;
+                ot30B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_3_0_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+            }
+
+            totalH = `<span class="text-warning fw-bold" style="${textStyle}">${(otItem.total_hours || 0).toFixed(1)}</span>`;
+            totalB = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+
+            btnClass = 'btn-warning text-white border-0 shadow-sm';
+            
+            totalHoursSum += otItem.total_hours || 0;
+            totalAmountSum += otItem.total_amount || 0;
+        }
+
+        const trClass = isWeekend ? 'bg-light' : '';
+
+        tableHTML += `
+            <tr class="${trClass}">
+                <td class="text-start ps-2 fw-bold text-nowrap" style="font-size: 0.65rem;">${dateStr}</td>
+                <td class="text-muted" style="font-size: 0.65rem;">${inTime}</td>
+                <td class="text-muted" style="font-size: 0.65rem;">${outTime}</td>
+                <td class="text-muted d-none d-lg-table-cell">${ot15H}</td>
+                <td class="text-muted d-none d-lg-table-cell">${ot15B}</td>
+                <td class="text-muted d-none d-lg-table-cell">${ot30H}</td>
+                <td class="text-muted d-none d-lg-table-cell">${ot30B}</td>
+                <td class="text-muted">${totalH}</td>
+                <td class="text-muted">${totalB}</td>
+                <td class="text-center px-1">
+                    <button class="btn ${btnClass} btn-sm rounded-circle btn-edit-ot" 
+                            data-date="${isoDate}" 
+                            data-id="${otItem ? otItem.id : ''}" 
+                            style="width: 20px; height: 20px; padding: 0;" 
+                            title="แก้ไข/เพิ่ม OT">
+                        <i class="fa-solid fa-pen-to-square" style="font-size: 0.55rem; position: relative; top: -1px;"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    tableHTML += `</tbody></table></div>`;
+    tableContainer.innerHTML = tableHTML;
+
+    // 5. อัปเดตชั่วโมงรวม ยอดเงินรวม
+    const totalHoursEl = document.querySelector('#ot-view .text-warning');
+    if (totalHoursEl) {
+        totalHoursEl.innerHTML = `${totalHoursSum.toFixed(1)} <span class="fs-6 text-muted fw-normal">Hrs</span>`;
+    }
+
+    const formattedTotal = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const amountValueEl = document.getElementById('amountValue');
+    if (amountValueEl) {
+        amountValueEl.setAttribute('data-value', formattedTotal);
+        const eyeIcon = document.querySelector('#ot-view .hide');
+        if (eyeIcon && eyeIcon.classList.contains('fa-eye-slash')) {
+            amountValueEl.textContent = formattedTotal;
+        } else {
+            amountValueEl.textContent = 'XX.XX';
+        }
+    }
+
+    const homeAmountEl = document.getElementById('homeAmountValue');
+    if (homeAmountEl) {
+        const homeValue = `THB ${formattedTotal}`;
+        homeAmountEl.setAttribute('data-value', homeValue);
+        const homeEyeIcon = document.getElementById('homeEyeIcon');
+        if (homeEyeIcon && homeEyeIcon.classList.contains('fa-eye-slash')) {
+            homeAmountEl.textContent = homeValue;
+        }
+    }
+
+    // 6. ผูก DataTables
+    const table = $('#otDataTable').DataTable({
+        paging: false,
+        info: false,
+        ordering: false,
+        dom: 't',
+        orderCellsTop: true,
+        language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
+    });
+
+    $('#dateSearchInput').on('input', function() {
+        let searchValue = this.value.trim();
+        if (/^\d$/.test(searchValue)) searchValue = '0' + searchValue;
+        table.column(0).search(searchValue).draw();
+    });
 }
 
 function initOTManagement() {
