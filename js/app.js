@@ -451,6 +451,7 @@ async function renderOTTable(selectedMonth) {
                     info: false,
                     ordering: false,
                     dom: 't',
+                    scrollX: false, // ⚡ ปิดการสกรอลล์แนวนอนของ DataTables
                     orderCellsTop: true,
                     language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
                 });
