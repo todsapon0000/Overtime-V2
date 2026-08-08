@@ -1459,7 +1459,7 @@ async function renderReportTable() {
                         <th colspan="2" class="border-bottom d-none d-lg-table-cell text-center bg-light">OT 3.0</th>
                         <th rowspan="2" class="text-center d-none d-lg-table-cell align-middle text-nowrap" style="min-width: 70px;">ค่าข้าว</th>
                         <th colspan="2" class="border-bottom text-center">รวม</th>
-                        <th rowspan="2" class="text-center px-1 align-middle" style="width: 45px;">Action</th>
+                        <th rowspan="2" class="text-center px-1 align-middle" style="width: 35px;">Action</th>
                     </tr>
                     <tr>
                         <th class="d-none d-lg-table-cell text-center">ชม.</th>
