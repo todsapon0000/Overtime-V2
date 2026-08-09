@@ -2007,3 +2007,23 @@ function renderNextPay() {
         dateEl.textContent = formattedDate;
     }
 }
+
+// ... โค้ดฟังก์ชันอื่นๆ ใน app.js ...
+
+// 🟢 วางไว้ล่างสุดของไฟล์ js/app.js แบบนี้ได้เลยครับ
+$(document).on('input', '#otTimeIn, #otTimeOut', function () {
+    let val = this.value.replace(/\D/g, ''); // ลบตัวอักษรที่ไม่ใช่ตัวเลขออกทั้งหมด
+    if (val.length > 4) val = val.slice(0, 4); // ล็อกความยาวไม่เกิน 4 หลัก
+
+    // พิมพ์ตัวเลขครบ 3 หลักขึ้นไป เติมเครื่องหมาย : ให้ทันที
+    if (val.length >= 3) {
+        this.value = val.slice(0, 2) + ':' + val.slice(2);
+    } else {
+        this.value = val;
+    }
+
+    // คำนวณชั่วโมงและยอดเงิน OT ใหม่อัตโนมัติทันทีที่พิมพ์
+    if (typeof calculateOTDetails === 'function') {
+        calculateOTDetails();
+    }
+});
