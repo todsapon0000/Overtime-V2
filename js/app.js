@@ -206,10 +206,11 @@ async function openEditOTModal(dateStr, docId = null) {
 
     calculateOTDetails();
 
-    // ⚡ 2. สั่งแสดง Modal ทันทีที่กด (ยูสเซอร์ไม่ต้องนั่งรอนาน)
+    // ⚡ 2. สั่งแสดง Modal ทันที
     if (otModalElement) {
         otModalElement.addEventListener('shown.bs.modal', () => {
-            if (otTimeOut) {
+            // 🟢 ปรับเงื่อนไข: โฟกัสช่อง otTimeOut เฉพาะกรณีไม่มีข้อมูลเดิม (เพิ่มรายการใหม่)
+            if (!hasValidDocId && otTimeOut) {
                 otTimeOut.focus();
                 otTimeOut.select();
             }
@@ -219,7 +220,7 @@ async function openEditOTModal(dateStr, docId = null) {
         modalInstance.show();
     }
 
-    // 🟢 3. แอบยิงดึงข้อมูลจาก Firestore เบื้องหลัง พอดึงมาได้ค่อยอัปเดตค่าลง Input
+    // 🟢 3. แอบยิงดึงข้อมูลจาก Firestore เบื้องหลัง (กรณีแก้ไข)
     if (hasValidDocId && typeof otService !== 'undefined' && typeof otService.getRecordById === 'function') {
         const res = await otService.getRecordById(docId);
         if (res && res.success && res.data) {
@@ -233,11 +234,12 @@ async function openEditOTModal(dateStr, docId = null) {
             if (otWorkPlaceName) otWorkPlaceName.value = item.work_place_name || "ออฟฟิศแหลมฉบัง";
             if (otRemark) otRemark.value = item.remark || "";
 
-            // คำนวณชั่วโมง/ยอดเงินใหม่อีกครั้งเมื่อได้ข้อมูลจริงครบแล้ว
             calculateOTDetails();
         }
     }
 }
+
+
 async function renderOTTable(selectedMonth) {
     const tableContainer = document.getElementById('tableContainer');
     if (!tableContainer) return;
