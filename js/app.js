@@ -345,7 +345,6 @@ async function renderOTTable(selectedMonth) {
             let btnClass = 'btn-outline-primary';
 
             if (otItem) {
-                const textStyle = 'font-size: 0.65rem;';
 
                 inTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_in}</span>`;
                 outTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_out}</span>`;
