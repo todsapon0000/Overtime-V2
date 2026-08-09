@@ -35,6 +35,15 @@ body {
         font-size: 0.62rem !important; /* ย่อฟอนต์เวลาลงอีกนิด */
     }
 
+    #otDataTable th:nth-child(1), 
+    #otDataTable td:nth-child(1) { 
+        width: 28% !important; 
+        font-size: 0.72rem !important;
+        padding-left: 2px !important;
+        padding-right: 1px !important;
+        letter-spacing: -0.2px !important;
+    }
+
     /* 2. ปรับความกว้าง % ของช่อง In และ Out ให้เหลือเพียง 10% */
     #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 5% !important; } /* In */
     #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 5% !important; } /* Out */
