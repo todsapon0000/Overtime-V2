@@ -167,42 +167,77 @@ function calculateOTDetails() {
     if (otMeal) otMeal.value = mealAmount;
 }
 
-async function openEditOTModal(dateVal, docId) {
-    // ⚡ 1. สั่งเปิด Modal ทันที 0ms (ไม่รอข้อมูล) ยูสเซอร์จะได้รู้ว่ากดติดแล้ว!
-    const modalEl = document.getElementById('otModal'); // เปลี่ยนเป็น ID Modal ของคุณ
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
+async function openEditOTModal(dateStr, docId = null) {
+    const otModalElement = document.getElementById('otModal');
+    const otIdInput = document.getElementById('ot_id');
+    const otDateInput = document.getElementById('otDate');
+    const otTimeIn = document.getElementById('otTimeIn');
+    const otTimeOut = document.getElementById('otTimeOut');
+    const otIsHoliday = document.getElementById('otIsHoliday');
+    const isOtBreakEl = document.getElementById('is_ot_break');
+    const otWorkPlaceType = document.getElementById('otWorkPlaceType');
+    const otWorkPlaceName = document.getElementById('otWorkPlaceName');
+    const otRemark = document.getElementById('otRemark');
+    const otModalTitle = document.getElementById('otModalTitle');
+    const btnDeleteOT = document.getElementById('btnDeleteOT');
 
-    // ⚡ 2. แสดงสถานะกำลังโหลดภายใน Modal (ถ้ามี Spinner)
-    const modalLoading = document.getElementById('modalLoading');
-    const modalForm = document.getElementById('otForm');
-    
-    if (modalLoading && modalForm) {
-        modalLoading.classList.remove('d-none'); // โชว์หมุนรอ
-        modalForm.classList.add('d-none');       // ซ่อนฟอร์มไว้ก่อน
+    const hasValidDocId = docId && docId !== 'null' && docId !== 'undefined';
+
+    // ⚡ 1. กำหนดค่าพื้นฐานลง Input ทันที 0ms (ไม่รอ Firebase)
+    if (otDateInput) otDateInput.value = dateStr;
+    if (otIdInput) otIdInput.value = hasValidDocId ? docId : '';
+
+    if (hasValidDocId) {
+        if (otModalTitle) otModalTitle.textContent = `แก้ไขรายการ OT (${dateStr})`;
+        if (btnDeleteOT) btnDeleteOT.classList.remove('d-none');
+    } else {
+        const otForm = document.getElementById('otForm');
+        if (otForm) otForm.reset();
+        
+        if (otIdInput) otIdInput.value = '';
+        if (otDateInput) otDateInput.value = dateStr;
+        if (otTimeIn) otTimeIn.value = "08:30";
+        if (otWorkPlaceType) otWorkPlaceType.value = "inside";
+        if (otWorkPlaceName) otWorkPlaceName.value = "ออฟฟิศแหลมฉบัง";
+        if (isOtBreakEl) isOtBreakEl.checked = false;
+        if (otModalTitle) otModalTitle.textContent = `เพิ่มรายการ OT (${dateStr})`;
+        if (btnDeleteOT) btnDeleteOT.classList.add('d-none');
     }
 
-    try {
-        // 🔄 3. แอบยิงดึงข้อมูลจาก Firebase เบื้องหลัง
-        if (docId) {
-            const response = await otService.getRecordById(docId); // หรือฟังก์ชันดึงข้อมูลตามโค้ดของคุณ
-            if (response.success) {
-                // เอาข้อมูลใส่ลง Input ฟอร์ม...
+    calculateOTDetails();
+
+    // ⚡ 2. สั่งแสดง Modal ทันทีที่กด (ยูสเซอร์ไม่ต้องนั่งรอนาน)
+    if (otModalElement) {
+        otModalElement.addEventListener('shown.bs.modal', () => {
+            if (otTimeOut) {
+                otTimeOut.focus();
+                otTimeOut.select();
             }
-        } else {
-            // เซตฟอร์มเปล่าสำหรับวันที่ dateVal
-        }
-    } catch (error) {
-        console.error("Error loading OT data:", error);
-    } finally {
-        // 🟢 4. พอข้อมูลมาครบ ปิด Spinner แล้วโชว์ฟอร์มทันที
-        if (modalLoading && modalForm) {
-            modalLoading.classList.add('d-none');
-            modalForm.classList.remove('d-none');
+        }, { once: true });
+
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(otModalElement);
+        modalInstance.show();
+    }
+
+    // 🟢 3. แอบยิงดึงข้อมูลจาก Firestore เบื้องหลัง พอดึงมาได้ค่อยอัปเดตค่าลง Input
+    if (hasValidDocId && typeof otService !== 'undefined' && typeof otService.getRecordById === 'function') {
+        const res = await otService.getRecordById(docId);
+        if (res && res.success && res.data) {
+            const item = res.data;
+
+            if (otTimeIn) otTimeIn.value = item.time_in || "08:30";
+            if (otTimeOut) otTimeOut.value = item.time_out || "17:30";
+            if (otIsHoliday) otIsHoliday.checked = !!item.is_holiday;
+            if (isOtBreakEl) isOtBreakEl.checked = !!item.is_ot_break;
+            if (otWorkPlaceType) otWorkPlaceType.value = item.work_place_type || "inside";
+            if (otWorkPlaceName) otWorkPlaceName.value = item.work_place_name || "ออฟฟิศแหลมฉบัง";
+            if (otRemark) otRemark.value = item.remark || "";
+
+            // คำนวณชั่วโมง/ยอดเงินใหม่อีกครั้งเมื่อได้ข้อมูลจริงครบแล้ว
+            calculateOTDetails();
         }
     }
 }
-
 async function renderOTTable(selectedMonth) {
     const tableContainer = document.getElementById('tableContainer');
     if (!tableContainer) return;
