@@ -305,10 +305,8 @@ async function renderOTTable(selectedMonth) {
                 <thead class="table-light text-muted small align-middle">
                     <tr>
                         <th rowspan="2" class="text-start align-middle" style="width: 8%;">
-                                
-                                <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
-                                       placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
-                            
+                            <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
+                                   placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
                         </th>
                         <th rowspan="2" class="text-center" style="width: 5%;">In</th>
                         <th rowspan="2" class="text-center" style="width: 5%;">Out</th>
@@ -426,16 +424,13 @@ async function renderOTTable(selectedMonth) {
                 }
             }
 
-            // 🟢 1. คำนวณและแปลงฟอร์แมตตัวเลขก่อนเป็นอันดับแรก
             const formattedTotal = totalAmountSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const homeValue = `THB ${formattedTotal}`;
 
-            // 🟢 2. อัปเดตฝั่ง Home (ยุบรวมโค้ดให้สะอาด ไร้การเขียนซ้ำ)
             const homeAmountEl = document.getElementById('homeAmountValue');
             if (homeAmountEl) {
                 homeAmountEl.setAttribute('data-value', homeValue);
                 
-                // ถ้าหน้า Home เปิดตาอยู่อยู่แล้ว ให้เปลี่ยนตัวเลขทันที
                 const homeEyeIcon = document.getElementById('homeEyeIcon');
                 if (homeEyeIcon && homeEyeIcon.classList.contains('fa-eye-slash')) {
                     homeAmountEl.textContent = homeValue;
@@ -448,7 +443,7 @@ async function renderOTTable(selectedMonth) {
                     info: false,
                     ordering: false,
                     dom: 't',
-                    scrollX: false, // ⚡ ปิดการสกรอลล์แนวนอนของ DataTables
+                    scrollX: false,
                     orderCellsTop: true,
                     language: { emptyTable: "ไม่มีข้อมูลในรอบเดือนนี้" }
                 });
@@ -460,17 +455,17 @@ async function renderOTTable(selectedMonth) {
                 });
             }
 
-            tableContainer.onclick = function(e) {
-                const btn = e.target.closest('.btn-edit-ot');
-                if (btn) {
+            // 🟢 จุดแก้ไขเดียว: เปลี่ยนจาก tableContainer.onclick เป็น jQuery Event Delegation
+            if (window.jQuery) {
+                $(tableContainer).off('click', '.btn-edit-ot').on('click', '.btn-edit-ot', function(e) {
                     e.preventDefault();
-                    const dateVal = btn.getAttribute('data-date');
-                    const docId = btn.getAttribute('data-id');
+                    const dateVal = $(this).attr('data-date');
+                    const docId = $(this).attr('data-id');
                     if (typeof openEditOTModal === 'function') {
                         openEditOTModal(dateVal, docId);
                     }
-                }
-            };
+                });
+            }
         };
 
         if (typeof smoothRender === 'function') {
