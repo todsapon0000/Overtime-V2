@@ -77,9 +77,6 @@ function updateLiveClock() {
     clockEl.textContent = `${day} ${month} ${year} | ${hours}:${minutes}:${seconds} น.`;
 }
 
-// ------------------------------------------
-// ☕ OT Management & Calculations
-// ------------------------------------------
 function calculateOTDetails() {
     const otTimeIn = document.getElementById('otTimeIn');
     const otTimeOut = document.getElementById('otTimeOut');
@@ -116,25 +113,43 @@ function calculateOTDetails() {
 
     let dayOfWeek = -1;
     if (otDateEl && otDateEl.value) {
-        const dateObj = new Date(otDateEl.value);
-        dayOfWeek = dateObj.getDay();
+        // 🟢 ป้องกัน Timezone Shift โดยการแปลง YYYY-MM-DD แบบ Local Date
+        const [y, m, d] = otDateEl.value.split('-').map(Number);
+        const dateObj = new Date(y, m - 1, d);
+        dayOfWeek = dateObj.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
     }
 
     let ot15 = 0, ot30 = 0;
-    const normalWorkEnd = 17 * 60 + 30;
-    const midnight = 24 * 60;
+    const weekdayWorkEnd = 17 * 60 + 30; // วันธรรมดา เลิก 17:30 น. (1050 นาที)
+    const satWorkEnd = 12 * 60;          // 🟢 วันเสาร์ เลิก 12:00 น. (720 นาที)
+    const midnight = 24 * 60;            // เที่ยงคืน 24:00 น. (1440 นาที)
 
     if (!isHoliday) {
-        if (endMinutes > normalWorkEnd) {
-            if (dayOfWeek === 6 && endMinutes > midnight) {
-                ot15 = (midnight - normalWorkEnd) / 60; 
-                ot30 = (endMinutes - midnight) / 60;
-            } else {
-                ot15 = (endMinutes - normalWorkEnd) / 60;
+        if (dayOfWeek === 6) { 
+            // 🟢 วันเสาร์: เริ่มคิด OT 1.5 ตั้งแต่ 12:00 น. เป็นต้นไป
+            if (endMinutes > satWorkEnd) {
+                if (endMinutes > midnight) {
+                    ot15 = (midnight - satWorkEnd) / 60; // 12:00 - 24:00 = 12 ชม.
+                    ot30 = (endMinutes - midnight) / 60; // หลังเที่ยงคืนคิด 3.0
+                } else {
+                    ot15 = (endMinutes - satWorkEnd) / 60; // เช่น 12:00 - 23:00 = 11 ชม.
+                }
+                if (hasBreak) ot15 -= 0.5;
             }
-            if (hasBreak) ot15 -= 0.5;
+        } else { 
+            // วันจันทร์ - ศุกร์: เริ่มคิด OT 1.5 ตั้งแต่ 17:30 น.
+            if (endMinutes > weekdayWorkEnd) {
+                if (endMinutes > midnight) {
+                    ot15 = (midnight - weekdayWorkEnd) / 60; 
+                    ot30 = (endMinutes - midnight) / 60;
+                } else {
+                    ot15 = (endMinutes - weekdayWorkEnd) / 60;
+                }
+                if (hasBreak) ot15 -= 0.5;
+            }
         }
     } else {
+        // วันนักขัตฤกษ์ / วันอาทิตย์
         let totalHours = (endMinutes - startMinutes) / 60;
         if (hasBreak) totalHours -= 0.5;
 
