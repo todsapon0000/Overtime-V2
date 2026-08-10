@@ -1521,16 +1521,15 @@ async function renderReportTable() {
             totalYearHours += monthHours; totalYearAmount += monthAmount;
 
             const hasData = monthHours > 0;
-            const textStyle = 'font-size: 0.8rem;';
             const btnClass = hasData ? 'btn-warning text-white border-0 shadow-sm' : 'btn-outline-primary';
 
-            const ot15HDisplay = ot15h > 0 ? `<span class="text-dark fw-bold" style="${textStyle}">${ot15h.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
-            const ot15BDisplay = ot15b > 0 ? `<span class="text-success fw-bold" style="${textStyle}">${ot15b.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
-            const ot30HDisplay = ot30h > 0 ? `<span class="text-dark fw-bold" style="${textStyle}">${ot30h.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
-            const ot30BDisplay = ot30b > 0 ? `<span class="text-success fw-bold" style="${textStyle}">${ot30b.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
-            const mealDisplay = monthMeal > 0 ? `<span class="text-primary fw-bold text-nowrap" style="${textStyle}">${monthMeal.toLocaleString('en-US')}</span>` : `<span class="text-muted">-</span>`;
-            const hoursDisplay = hasData ? `<span class="text-warning fw-bold text-nowrap" style="${textStyle}">${monthHours.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
-            const amountDisplay = hasData ? `<span class="text-success fw-bold text-nowrap" style="${textStyle}">${monthAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
+            const ot15HDisplay = ot15h > 0 ? `<span class="text-dark fw-bold" >${ot15h.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
+            const ot15BDisplay = ot15b > 0 ? `<span class="text-success fw-bold" >${ot15b.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
+            const ot30HDisplay = ot30h > 0 ? `<span class="text-dark fw-bold" >${ot30h.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
+            const ot30BDisplay = ot30b > 0 ? `<span class="text-success fw-bold" >${ot30b.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
+            const mealDisplay = monthMeal > 0 ? `<span class="text-primary fw-bold text-nowrap" >${monthMeal.toLocaleString('en-US')}</span>` : `<span class="text-muted">-</span>`;
+            const hoursDisplay = hasData ? `<span class="text-warning fw-bold text-nowrap" >${monthHours.toFixed(1)}</span>` : `<span class="text-muted">-</span>`;
+            const amountDisplay = hasData ? `<span class="text-success fw-bold text-nowrap" >${monthAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>` : `<span class="text-muted">-</span>`;
 
             tableHTML += `
                 <tr>
