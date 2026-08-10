@@ -185,3 +185,23 @@ body > null,
 body > div:empty {
     display: none !important;
 }
+
+/* 📱 แก้ปัญหา Footer โดน Toolbar / Home Bar บนมือถือบัง */
+footer {
+    /* 🟢 เผื่อระยะด้านล่างตาม Safe Area ของแต่ละเครื่อง + ระยะเผื่อเพิ่ม 20px */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+    margin-bottom: 0 !important;
+}
+
+/* ปรับ Wrapper หลักให้ใช้ dvh (Dynamic Viewport Height) แทน vh */
+.main-content-wrapper,
+body {
+    min-height: 100dvh !important; /* 🟢 dvh จะคำนวณความสูงตามขนาดหน้าจอจริงที่หัก Toolbar ออกแล้ว */
+}
+
+@media (max-width: 768px) {
+    /* เพิ่ม Padding ล่างสุดให้กับพื้นที่เนื้อหา ป้องกันคอนเทนต์ก้อนสุดท้ายชิด Toolbar เกินไป */
+    .main-content-wrapper {
+        padding-bottom: 40px !important;
+    }
+}
