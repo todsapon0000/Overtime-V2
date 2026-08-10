@@ -546,7 +546,7 @@ function initOTManagement() {
 
     const btnDeleteOT = document.getElementById('btnDeleteOT');
     if (btnDeleteOT) {
-        // 🟢 ใช้ jQuery .off('click').on('click') ป้องกัน Event ผูกซ้ำหลายครั้ง
+        // 🟢 ดัก Event การคลิกที่ปุ่มลบ
         $(btnDeleteOT).off('click').on('click', async function(e) {
             e.preventDefault();
 
@@ -554,13 +554,13 @@ function initOTManagement() {
             const docId = docIdInput ? docIdInput.value.trim() : '';
             const targetDate = document.getElementById('otDate')?.value || '';
 
-            // 🛑 ตรวจสอบ ID กรณีหลุดรอด
+            // 🛑 1. ตรวจสอบ ID
             if (!docId || docId === '' || docId === 'undefined' || docId === 'null') {
                 showNotification("ไม่พบ ID รายการนี้ในระบบ ไม่สามารถสั่งลบได้ครับ (กรุณา Refresh หน้าเว็บแล้วลองอีกครั้ง)", 'error');
                 return;
             }
 
-            // 🟢 1. บล็อกปุ่มลบชั่วคราวเพื่อป้องกันผู้ใช้กดซ้ำๆ
+            // 🛑 2. ล็อกปุ่มลบป้องกันการกดย้ำซ้ำๆ
             btnDeleteOT.disabled = true;
 
             const otModalContent = document.querySelector('#otModal .modal-content');
@@ -569,24 +569,20 @@ function initOTManagement() {
                 return;
             }
 
-            // 🌀 แสดง Spinner หมุนซ้อนทับบนหน้าต่าง Modal
+            // 🌀 3. แสดง Spinner หมุนซ้อนทับบน Modal
             const loadingOverlay = document.createElement('div');
             loadingOverlay.id = 'otModalLoadingOverlay';
             loadingOverlay.className = 'position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-75 rounded-3';
             loadingOverlay.style.zIndex = '1056';
             loadingOverlay.style.backdropFilter = 'blur(4px)';
-            loadingOverlay.style.webkitBackdropFilter = 'blur(4px)';
             loadingOverlay.innerHTML = `
-                <div class="spinner-border text-danger mb-2" style="width: 2.5rem; height: 2.5rem;" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+                <div class="spinner-border text-danger mb-2" style="width: 2.5rem; height: 2.5rem;" role="status"></div>
                 <div class="fw-bold text-danger small">กำลังลบข้อมูลออกจากระบบ...</div>
             `;
-
             otModalContent.classList.add('position-relative');
             otModalContent.appendChild(loadingOverlay);
 
-            // 2. สั่งลบข้อมูลออกจาก Firestore
+            // 4. สั่งลบข้อมูลออกจาก Firestore
             let result = { success: false, error: 'otService ไม่พร้อมใช้งาน' };
             try {
                 if (typeof otService !== 'undefined' && typeof otService.deleteRecord === 'function') {
@@ -596,39 +592,37 @@ function initOTManagement() {
                 result = { success: false, error: err.message };
             }
 
-            // 3. เอา Spinner ออก + ปลดล็อกปุ่ม
+            // 5. เอา Spinner ออก + ปลดล็อกปุ่ม
             const overlayEl = document.getElementById('otModalLoadingOverlay');
             if (overlayEl) overlayEl.remove();
             btnDeleteOT.disabled = false;
 
-            // 🟢 4. ปลดโฟกัสออกจากปุ่มลบก่อนสั่งปิด Modal (แก้ปัญหา Error aria-hidden / focus null ใน Console)
-            if (document.activeElement && typeof document.activeElement.blur === 'function') {
-                document.activeElement.blur();
-            }
-
-            // 5. สั่งปิด Modal แก้ไข OT
+            // 🟢 6. จัดการปิด Modal และรอให้ Bootstrap ปิดสมบูรณ์ 100% ก่อนทำงานต่อ (แก้ Error focus สีแดง)
             const otModalEl = document.getElementById('otModal');
             if (otModalEl) {
-                const modalInstance = bootstrap.Modal.getInstance(otModalEl);
-                if (modalInstance) modalInstance.hide();
-            }
 
-            // 🟢 6. รอ 200ms ให้ Modal แรกเล่น Animation ปิดจบครบกระบวนการ ป้องกัน Modal ชนกัน
-            await new Promise(resolve => setTimeout(resolve, 200));
+                // ⚡ ดักฟัง Event 'hidden.bs.modal' (ทำงานเมื่อ Modal แรกปิดสนิท ไร้ Animation ค้าง)
+                $(otModalEl).one('hidden.bs.modal', async function () {
+                    if (result && result.success) {
+                        const monthSelector = document.getElementById('monthSelector');
+                        const selectedM = monthSelector ? monthSelector.value : getCurrentOTMonth();
+                        
+                        // รีโหลดตารางทันทีหลัง Modal ปิดสนิท
+                        if (typeof renderOTTable === 'function') {
+                            await renderOTTable(selectedM);
+                        }
 
-            // 7. 🔔 แจ้งเตือนผลการลบ + รีโหลดตารางทันที
-            if (result && result.success) {
-                const monthSelector = document.getElementById('monthSelector');
-                const selectedM = monthSelector ? monthSelector.value : getCurrentOTMonth();
-                
-                // รีโหลดตารางข้อมูลใหม่
-                if (typeof renderOTTable === 'function') {
-                    await renderOTTable(selectedM);
+                        showNotification(`ลบรายการ OT วันที่ ${targetDate} เรียบร้อยแล้วครับ!`, 'success');
+                    } else {
+                        showNotification("เกิดข้อผิดพลาดในการลบข้อมูล: " + (result?.error || "ไม่ทราบสาเหตุ"), 'error');
+                    }
+                });
+
+                // สั่งปิด Modal
+                const modalInstance = bootstrap.Modal.getInstance(otModalEl) || bootstrap.Modal.getOrCreateInstance(otModalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
                 }
-
-                showNotification(`ลบรายการ OT วันที่ ${targetDate} เรียบร้อยแล้วครับ!`, 'success');
-            } else {
-                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล: " + (result?.error || "ไม่ทราบสาเหตุ"), 'error');
             }
         });
     }
