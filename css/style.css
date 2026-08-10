@@ -186,19 +186,24 @@ body > div:empty {
     display: none !important;
 }
 
-/* 📱 บังคับดัน Footer ขึ้นมาให้พ้น Toolbar ของทั้ง Safari และ Chrome บนมือถือ */
-footer {
-    /* 🟢 ใช้ max() เพื่อเลือกระหว่าง 60px (สำหรับ Chrome) กับ Safe Area (สำหรับ Safari) ตัวไหนกว้างกว่าใช้อันนั้น */
-    padding-bottom: max(60px, calc(env(safe-area-inset-bottom, 0px) + 20px)) !important;
-    margin-bottom: 0 !important;
-    position: relative;
-    z-index: 5;
+/* 🟢 ล็อก Footer ให้ตรึงค้างอยู่ติดขอบล่างหน้าจอขนานไปตลอดเวลา */
+footer, 
+.footer,
+#footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 1030 !important; /* ให้อยู่เหนือเนื้อหาตาราง */
+    background-color: #ffffff !important; /* พื้นหลังสีขาวกันเนื้อหาซ้อนทับ */
+    border-top: 1px solid #dee2e6 !important;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important; /* เพิ่มมิติเงาเบาๆ */
+    padding: 8px 15px !important;
 }
 
-/* ปรับ Wrapper หลักให้ใช้ dvh (Dynamic Viewport Height) แทน vh */
-.main-content-wrapper,
+/* 🟢 ดันระยะเว้นด้านล่างของหน้าเว็บ ไม่ให้เนื้อหาหรือปุ่มถูก Footer ทับ */
 body {
-    min-height: 100dvh !important; /* 🟢 dvh จะคำนวณความสูงตามขนาดหน้าจอจริงที่หัก Toolbar ออกแล้ว */
+    padding-bottom: 55px !important;
 }
 
 /* 🟢 ดัน Container หลักของหน้าเว็บขึ้นมาป้องกันเนื้อหาโดนบัง */
