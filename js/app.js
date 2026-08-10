@@ -19,6 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
+
+    // 🟢 ย้าย Modals ทุกตัวในระบบออกมาอยู่นอก #app-content อัตโนมัติ (เพื่อให้ทุก Popup เบลอฉากหลังได้ 100%)
+    document.querySelectorAll('.modal').forEach(modal => {
+        if (modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+    });
+
 });
 
 // ------------------------------------------

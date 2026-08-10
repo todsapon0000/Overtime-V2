@@ -220,3 +220,36 @@ body > div:empty {
         padding-bottom: 0 !important;       /* 🟢 ยกเลิก padding ด้านล่างของ body */
     }
 }
+
+/* ==========================================
+   🌀 App Content Wrapper & Perfect Blur Effect
+   ========================================== */
+
+/* 🟢 1. ตัวครอบหลัก: ยืดความสูงเต็มจอ และวางเรียงแนวตั้งตามปกติ */
+#app-content {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: filter, transform;
+    transform-origin: center top !important;
+}
+
+/* 🌀 2. เมื่อเปิด Modal: เบลอฉากหลัง + ยกสเกลขึ้นเล็กน้อย (-3px) กลบขอบขาวบนสุดมิดชิด */
+body.modal-open #app-content {
+    filter: blur(6px) !important;
+    -webkit-filter: blur(6px) !important;
+}
+
+/* 🛑 3. ล็อก Scrollbar เฉพาะจังหวะที่ Modal เปิดอยู่ */
+body.modal-open {
+    overflow: hidden !important;
+}
+
+/* 🎨 4. ฉากหลังมืดโปร่งแสงของ Modal */
+.modal-backdrop.show {
+    opacity: 0.4 !important;
+    background-color: #000000 !important;
+}
