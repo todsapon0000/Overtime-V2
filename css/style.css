@@ -31,10 +31,9 @@ body {
     /* ล็อกความกว้างขั้นต่ำคอลัมน์ Date ไว้ที่ 75px ให้พอดีกับคำว่า 01 Aug */
     #otDataTable th:first-child,
     #otDataTable td:first-child {
-        width: 100px !important;
-        min-width: 100px !important;
-        padding-left: 2px !important;
-        padding-right: 1px !important;
+        width: 14% !important;        /* 🟢 ขยายกว้างขึ้นสมส่วนกับจอใหญ่ */
+        min-width: auto !important;   /* 🟢 ปลดล็อก 75px ออก */
+        padding: 0.5rem !important;   /* 🟢 เว้นระยะช่องให้อ่านง่าย */
         white-space: nowrap !important;
     }
 }
