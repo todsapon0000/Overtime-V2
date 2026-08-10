@@ -1756,7 +1756,7 @@ async function renderFeedbackReportTable() {
         const hasImage = !!item.image_url;
         const imageBtn = hasImage ? `
             <button class="btn btn-sm btn-outline-primary py-0 px-2 btn-view-image" data-img="${item.image_url}" style="font-size: 0.75rem;">
-                <i class="fa-solid fa-image me-1"></i> ดูรูป
+                <i class="fa-solid fa-image me-1"></i>
             </button>
         ` : `<span class="text-muted small">-</span>`;
 
