@@ -17,6 +17,7 @@ body {
     border-right: 1px solid #dee2e6; 
 }
 
+/* 💻 สไตล์สำหรับหน้าจอคอมพิวเตอร์ / แท็บเล็ต (กว้างตั้งแต่ 768px ขึ้นไป) */
 @media (min-width: 768px) {
     .sidebar {
         width: var(--sidebar-width) !important;
@@ -26,28 +27,36 @@ body {
         width: calc(100% - var(--sidebar-width));
         flex-grow: 1;
     }
+}
 
-    /* 1. ย่อตัวหนังสือเวลา In/Out + บีบตัวเลขให้ชิดขึ้น */
+/* 📱 สไตล์สำหรับหน้าจอมือถือโดยเฉพาะ (ความกว้างไม่เกิน 768px) */
+@media (max-width: 768px) {
+
+    /* 1. ขยายคอลัมน์แรก (Date) เพิ่มเป็น 32% ให้รองรับชื่อเดือนยาวๆ เช่น 01 Aug ได้ไม่ติด (...) */
+    #otDataTable th:nth-child(1), 
+    #otDataTable td:nth-child(1) { 
+        width: 32% !important; 
+        font-size: 0.70rem !important;
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+        letter-spacing: -0.3px !important;
+    }
+
+    /* 2. ย่อตัวหนังสือและบีบความกว้างช่อง In และ Out (คอลัมน์ 2 และ 3) */
     #otDataTable tbody td:nth-child(2),
     #otDataTable tbody td:nth-child(2) span,
     #otDataTable tbody td:nth-child(3),
     #otDataTable tbody td:nth-child(3) span {
-        font-size: 0.62rem !important; /* ย่อฟอนต์เวลาลงอีกนิด */
+        font-size: 0.62rem !important;
     }
 
-    #otDataTable th:nth-child(1), 
-    #otDataTable td:nth-child(1) { 
-        width: 30% !important; 
-        font-size: 0.72rem !important;
-        padding-left: 2px !important;
-        padding-right: 1px !important;
-        letter-spacing: -0.2px !important;
-    }
+    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 11% !important; } /* In */
+    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 11% !important; } /* Out */
 
-    /* 2. ปรับความกว้าง % ของช่อง In และ Out ให้เหลือเพียง 10% */
-    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 5% !important; } /* In */
-    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 5% !important; } /* Out */
-
+    /* 3. จัดสัดส่วนคอลัมน์ฝั่งขวาที่เหลือให้รวมได้ 100% พอดี */
+    #otDataTable th:nth-child(8), #otDataTable td:nth-child(8) { width: 8% !important; }  /* ชม. */
+    #otDataTable th:nth-child(9), #otDataTable td:nth-child(9) { width: 31% !important; } /* บาท */
+    #otDataTable th:nth-child(10), #otDataTable td:nth-child(10) { width: 7% !important; } /* Action */
 }
 
 /* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
