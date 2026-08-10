@@ -27,6 +27,20 @@ body {
         width: calc(100% - var(--sidebar-width));
         flex-grow: 1;
     }
+
+    #otDataTable th,
+    #otDataTable td {
+        width: auto !important;          /* 🟢 ให้คอลัมน์คำนวณแบ่งพื้นที่ตามปกติ (ห้ามใส่ 100%) */
+        min-width: auto !important;      /* 🟢 ปลดล็อก min-width */
+        font-size: 0.875rem !important;  /* 🟢 ขยายฟอนต์เป็นขนาดปกติมาตรฐาน Bootstrap */
+        padding: 0.5rem !important;      /* 🟢 เว้นระยะขอบช่องให้อ่านง่าย สบายตา */
+        white-space: nowrap !important;
+    }
+
+    /* 🟢 2. ขยายฟอนต์ของตัวเลขเวลา In/Out และยอดเงินใน span */
+    #otDataTable tbody td span {
+        font-size: 0.85rem !important;
+    }
 }
 
 /* 📱 บังคับความกว้างขั้นต่ำคอลัมน์แรก (Date) ไม่ให้โดนบีบตัดเป็นจุดไข่ปลา (...) บนมือถือ */
