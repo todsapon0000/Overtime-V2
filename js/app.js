@@ -350,28 +350,30 @@ async function renderOTTable(selectedMonth) {
             let ot15H = '-', ot15B = '-', ot30H = '-', ot30B = '-', mealB = '-', totalH = '-', totalB = '-';
             let btnClass = 'btn-outline-primary';
 
-            if (otItem) {
-                const textStyle = 'font-size: 0.65rem;';
+// 🟢 แก้ไขตรงท่อนในลูป while (currentDate <= endDate) ใน js/app.js
 
-                inTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_in}</span>`;
-                outTime = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.time_out}</span>`;
+            if (otItem) {
+                // ❌ ถอด const textStyle = 'font-size: 0.65rem;'; ออก
+                
+                inTime = `<span class="text-primary fw-bold">${otItem.time_in}</span>`;
+                outTime = `<span class="text-primary fw-bold">${otItem.time_out}</span>`;
 
                 if (otItem.ot_1_5_hours > 0) {
-                    ot15H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_1_5_hours.toFixed(1)}</span>`;
-                    ot15B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_1_5_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+                    ot15H = `<span class="text-dark fw-bold">${otItem.ot_1_5_hours.toFixed(1)}</span>`;
+                    ot15B = `<span class="text-success fw-bold">${(otItem.ot_1_5_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
                 }
 
                 if (otItem.ot_3_0_hours > 0) {
-                    ot30H = `<span class="text-dark fw-bold" style="${textStyle}">${otItem.ot_3_0_hours.toFixed(1)}</span>`;
-                    ot30B = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.ot_3_0_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+                    ot30H = `<span class="text-dark fw-bold">${otItem.ot_3_0_hours.toFixed(1)}</span>`;
+                    ot30B = `<span class="text-success fw-bold">${(otItem.ot_3_0_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
                 }
 
                 if (otItem.meal_amount > 0) {
-                    mealB = `<span class="text-primary fw-bold" style="${textStyle}">${otItem.meal_amount.toLocaleString('en-US')}</span>`;
+                    mealB = `<span class="text-primary fw-bold">${otItem.meal_amount.toLocaleString('en-US')}</span>`;
                 }
 
-                totalH = `<span class="text-warning fw-bold" style="${textStyle}">${(otItem.total_hours || 0).toFixed(1)}</span>`;
-                totalB = `<span class="text-success fw-bold" style="${textStyle}">${(otItem.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+                totalH = `<span class="text-warning fw-bold">${(otItem.total_hours || 0).toFixed(1)}</span>`;
+                totalB = `<span class="text-success fw-bold">${(otItem.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
 
                 btnClass = 'btn-warning text-white border-0 shadow-sm';
                 
@@ -381,11 +383,12 @@ async function renderOTTable(selectedMonth) {
 
             const trClass = isWeekend ? 'bg-light' : '';
 
+            // 🟢 ถอด style="font-size:..." ออกจาก <td>
             tableHTML += `
                 <tr class="${trClass}">
-                    <td class="text-center fw-bold text-nowrap" style="font-size: 0.8rem; width: 12%;">${dateStr}</td>
-                    <td class="text-muted" style="font-size: 0.65rem;">${inTime}</td>
-                    <td class="text-muted" style="font-size: 0.65rem;">${outTime}</td>
+                    <td class="text-center fw-bold text-nowrap">${dateStr}</td>
+                    <td class="text-muted">${inTime}</td>
+                    <td class="text-muted">${outTime}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot15H}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot15B}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot30H}</td>
@@ -399,7 +402,7 @@ async function renderOTTable(selectedMonth) {
                                 data-id="${otItem ? otItem.id : ''}" 
                                 style="width: 30px; height: 30px; padding: 0;" 
                                 title="แก้ไข/เพิ่ม OT">
-                            <i class="fa-solid fa-pen-to-square" style="font-size: 0.7rem; pointer-events: none; position: relative; top: -1px;"></i>
+                            <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem; pointer-events: none; position: relative; top: -1px;"></i>
                         </button>
                     </td>
                 </tr>
