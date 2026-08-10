@@ -54,7 +54,28 @@ if (typeof getPaymentDateText !== 'function') {
     };
 }
 
+// ------------------------------------------
+// ⏰ Real-time Clock
+// ------------------------------------------
+function updateLiveClock() {
+    const clockEl = document.getElementById('liveClock');
+    if (!clockEl) return;
 
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    const month = thaiMonths[now.getMonth()];
+    const year = now.getFullYear() + 543;
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    clockEl.textContent = `${day} ${month} ${year} | ${hours}:${minutes}:${seconds} น.`;
+}
 
 function calculateOTDetails() {
     const otTimeIn = document.getElementById('otTimeIn');
