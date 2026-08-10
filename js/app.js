@@ -1990,8 +1990,7 @@ function getPayDate(year, monthIndex) {
 
 // ฟังก์ชันหลักสำหรับเรนเดอร์ Next Pay
 function renderNextPay() {
-    const daysEl = document.getElementById('nextPayDays');
-    const dateEl = document.getElementById('nextPayDate');
+    const daysEl = document.getElementsByClassName('nextPayDays');
     if (!daysEl && !dateEl) return;
 
     const now = new Date();
