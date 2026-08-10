@@ -73,6 +73,35 @@ body {
     }
 }
 
+/* 📱 ปรับแต่ง UI บนมือถือ: ย่อชื่อบน Navbar และป้องกัน THB ตกบรรทัด */
+@media (max-width: 768px) {
+
+    /* 🟢 1. ย่อชื่อ Saowalak Phuttharaksa ด้านบนให้ขนาดพอดี กระทัดรัด */
+    .navbar-brand,
+    .navbar h1, .navbar h2, .navbar h3, .navbar h4, .navbar h5, .navbar span.fw-bold {
+        font-size: 1.05rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* 🟢 2. ย่อขนาดตัวเลขยอดเงินในหน้า OT ให้รองรับยอดหลักหมื่น (เช่น 25,750.00) โดยไม่ดัน THB ตกบรรทัด */
+    #amountValue {
+        font-size: 1.25rem !important; /* ปรับย่อขนาดตัวเลขลงนิดหน่อย */
+    }
+
+    /* 🟢 3. บังคับให้ตัวเลขออพชั่น ยอดเงิน + THB อยู่บรรทัดเดียวกันเสมอ */
+    #ot-view .card-body {
+        padding: 0.75rem !important; /* บีบระยะขอบการ์ดข้างในนิดเดียวเพื่อให้ได้พื้นที่เพิ่ม */
+    }
+
+    /* ขนาดตัวหนังสือ THB และ Hrs */
+    #ot-view .card-body span.fs-6,
+    #ot-view .card-body .text-muted {
+        font-size: 0.75rem !important;
+    }
+}
+
 /* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
 .table-responsive {
     overflow-x: hidden !important; /* ⚡ ปิดการเลื่อนซ้าย-ขวาเด็ดขาด */
