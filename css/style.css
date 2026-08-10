@@ -70,7 +70,7 @@ body {
 @media (max-width: 768px) {
     #otDataTable th:first-child,
     #otDataTable td:first-child {
-        width: 1% !important;
+        width: 14% !important;
         white-space: nowrap !important;
         font-size: 0.72rem !important;
         padding-left: 2px !important;
