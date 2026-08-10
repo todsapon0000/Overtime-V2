@@ -186,31 +186,38 @@ body > div:empty {
     display: none !important;
 }
 
-/* 🟢 ล็อก Footer ให้ตรึงค้างอยู่ติดขอบล่างหน้าจอขนานไปตลอดเวลา */
-footer, 
-.footer,
-#footer {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    z-index: 1030 !important; /* ให้อยู่เหนือเนื้อหาตาราง */
-    background-color: #ffffff !important; /* พื้นหลังสีขาวกันเนื้อหาซ้อนทับ */
-    border-top: 1px solid #dee2e6 !important;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important; /* เพิ่มมิติเงาเบาๆ */
-    padding: 8px 15px !important;
-}
-
-/* 🟢 ดันระยะเว้นด้านล่างของหน้าเว็บ ไม่ให้เนื้อหาหรือปุ่มถูก Footer ทับ */
-body {
-    padding-bottom: 55px !important;
-}
-
-/* 🟢 ดัน Container หลักของหน้าเว็บขึ้นมาป้องกันเนื้อหาโดนบัง */
+/* 📱 1. สำหรับมือถือเท่านั้น (<= 768px) -> ล็อก Footer ติดขอบล่างหน้าจอ */
 @media (max-width: 768px) {
-    .main-content-wrapper,
-    main,
-    #app-content {
-        padding-bottom: 70px !important; /* ดันเนื้อหาก้อนสุดท้ายขึ้นมาเผื่อระยะ */
+    footer, .footer, #footer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 1030 !important;
+        background-color: #ffffff !important;
+        border-top: 1px solid #dee2e6 !important;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important;
+        padding: 8px 15px !important;
+    }
+
+    body {
+        padding-bottom: 55px !important; /* เว้นระยะกัน Footer ทับเนื้อหาบนมือถือ */
+    }
+}
+
+/* 💻 2. สำหรับหน้าจอคอมพิวเตอร์ / แท็บเล็ต (>= 769px) -> คืนค่า Footer เป็นปกติ เรียงต่อท้ายเนื้อหา */
+@media (min-width: 769px) {
+    footer, .footer, #footer {
+        position: static !important;        /* 🟢 คืนค่าไม่ให้ลอยค้าง */
+        width: 100% !important;
+        background-color: transparent !important;
+        border-top: 1px solid #dee2e6 !important;
+        box-shadow: none !important;
+        padding: 15px 0 !important;
+        margin-top: 2rem !important;        /* 🟢 เว้นระยะห่างจากตารางด้านบนให้สวยงาม */
+    }
+
+    body {
+        padding-bottom: 0 !important;       /* 🟢 ยกเลิก padding ด้านล่างของ body */
     }
 }
