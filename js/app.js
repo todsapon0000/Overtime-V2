@@ -1846,9 +1846,17 @@ document.addEventListener('submit', async (e) => {
             let imageUrl = '';
 
             if (file) {
-                if (submitBtn) submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i> กำลังแปลงรูปภาพ...`;
-                if (typeof feedbackService.fileToBase64 === 'function') {
-                    imageUrl = await feedbackService.fileToBase64(file);
+                if (submitBtn) submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i> กำลังย่อขนาดรูปภาพ...`;
+                
+                // 🟢 เปลี่ยนมาใช้ระบบย่อขนาดรูปภาพก่อนส่งขึ้น Firestore
+                try {
+                    imageUrl = await compressImageToBase64(file, 800, 0.6);
+                } catch (compressErr) {
+                    console.error("Image Compression Error:", compressErr);
+                    // กรณีบีบอัดไม่ผ่าน ให้สลับไปใช้ของเดิม
+                    if (typeof feedbackService !== 'undefined' && typeof feedbackService.fileToBase64 === 'function') {
+                        imageUrl = await feedbackService.fileToBase64(file);
+                    }
                 }
             }
 
