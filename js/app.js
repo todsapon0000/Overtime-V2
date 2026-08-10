@@ -310,9 +310,9 @@ async function renderOTTable(selectedMonth) {
             <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table">
                 <thead class="table-light text-muted small align-middle">
                     <tr>
-                        <th rowspan="2" class="text-center align-middle" style="width: 12%;">
+                        <th rowspan="2" class="text-start align-middle">
                             <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
-                                   placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
+                                placeholder=" Date" style="font-size: 0.75rem; box-shadow: none; background-color: transparent;">
                         </th>
                         <th rowspan="2" class="text-center" style="width: 5%;">In</th>
                         <th rowspan="2" class="text-center" style="width: 5%;">Out</th>
