@@ -62,6 +62,15 @@ function updateLiveClock() {
     if (!clockEl) return;
 
     const now = new Date();
+
+    // 🟢 1. ชื่อวันในสัปดาห์ (ภาษาไทย)
+    const thaiDays = [
+        'วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ',
+        'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'
+    ];
+    const dayName = thaiDays[now.getDay()];
+
+    // 🟢 2. วันที่ เดือน ปี (พ.ศ.)
     const day = String(now.getDate()).padStart(2, '0');
     const thaiMonths = [
         'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -70,11 +79,13 @@ function updateLiveClock() {
     const month = thaiMonths[now.getMonth()];
     const year = now.getFullYear() + 543;
 
+    // 🟢 3. เวลา (ระบบ 24 ชั่วโมง)
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    clockEl.textContent = `${day} ${month} ${year} | ${hours}:${minutes}:${seconds} น.`;
+    // 🟢 4. พ่นข้อความรูปแบบใหม่: วันอังคาร 11 สิงหาคม 2569 | 01:52:00 น.
+    clockEl.textContent = `${dayName} ${day} ${month} ${year} | ${hours}:${minutes}:${seconds} น.`;
 }
 
 function calculateOTDetails() {
@@ -2011,8 +2022,8 @@ function getPayDate(year, monthIndex) {
 
 // ฟังก์ชันหลักสำหรับเรนเดอร์ Next Pay
 function renderNextPay() {
-    const daysEl = document.getElementsByClassName('nextPayDays');
-    const dateEl = document.getElementsByClassName('nextPayDate');
+    const daysEl = document.getElementById('nextPayDays');
+    const dateEl = document.querySelectorAll('.nextPayDate');
     if (!daysEl && !dateEl) return;
 
     const now = new Date();
@@ -2048,8 +2059,10 @@ function renderNextPay() {
         }
     }
 
-    if (dateEl) {
-        dateEl.textContent = formattedDate;
+    if (dateEl && dateEl.length > 0) {
+        dateEl.forEach(el => {
+            el.textContent = formattedDate;
+        });
     }
 }
 
