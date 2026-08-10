@@ -43,8 +43,8 @@ body {
     /* ล็อกความกว้างขั้นต่ำคอลัมน์ Date ไว้ที่ 75px ให้พอดีกับคำว่า 01 Aug */
     #otDataTable th:first-child,
     #otDataTable td:first-child {
-        width: 40px !important;
-        min-width: 40px !important;
+        width: 50px !important;
+        min-width: 50px !important;
         font-size: 0.72rem !important;
         padding-left: 2px !important;
         padding-right: 1px !important;
