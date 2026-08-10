@@ -114,7 +114,6 @@ function calculateOTDetails() {
 
     let dayOfWeek = -1;
     if (otDateEl && otDateEl.value) {
-        // 🟢 ป้องกันเรื่อง Timezone Shift ล็อกวันที่ให้ตรงวันแน่นอน
         const [y, m, d] = otDateEl.value.split('-').map(Number);
         const dateObj = new Date(y, m - 1, d);
         dayOfWeek = dateObj.getDay(); // 0 = อาทิตย์, 1 = จันทร์, ..., 6 = เสาร์
@@ -125,31 +124,52 @@ function calculateOTDetails() {
     const satWorkEnd = 12 * 60;          // วันเสาร์ เลิก 12:00 น. (720 นาที)
     const midnight = 24 * 60;            // เที่ยงคืน 24:00 น. (1440 นาที)
 
-    if (!isHoliday) {
+    if (!isHoliday && dayOfWeek !== 0) {
         if (dayOfWeek === 6) { 
-            // 🟢 วันเสาร์: เลิก 12:00 น. -> คิด 1.5 ถึงเที่ยงคืน / หลังเที่ยงคืนคิด 3.0
+            // 🟢 1. วันเสาร์ (ไม่ใช่วันนักขัตฤกษ์)
             if (endMinutes > satWorkEnd) {
                 if (endMinutes > midnight) {
-                    ot15 = (midnight - satWorkEnd) / 60; // 12:00 - 24:00 = 12.0 ชม.
-                    ot30 = (endMinutes - midnight) / 60; // หลังเที่ยงคืนคิด 3.0
+                    ot15 = (midnight - satWorkEnd) / 60; // 12:00 - 24:00 = 12 ชม.
+                    ot30 = (endMinutes - midnight) / 60; // หลังเที่ยงคืน คิด 3.0
                 } else {
                     ot15 = (endMinutes - satWorkEnd) / 60;
                 }
-                if (hasBreak) ot15 -= 0.5;
+
+                // 🍱 หักเบรกวันเสาร์
+                if (hasBreak) {
+                    if (endMinutes > 12 * 60 + 30) ot15 -= 1.0;  // หักเบรกเที่ยง (12:00 - 13:00) = 1 ชม.
+                    if (endMinutes > 17 * 60 + 30) ot15 -= 0.5;  // หักเบรกเย็น (17:30 - 18:00) = 0.5 ชม.
+                }
             }
         } else { 
-            // 🟢 วันธรรมดา (จันทร์ - ศุกร์): เลิก 17:30 น. -> คิด 1.5 ยิงยาวข้ามเที่ยงคืน (ไม่มี 3.0)
+            // 🟢 2. วันธรรมดา (จันทร์ - ศุกร์)
             if (endMinutes > weekdayWorkEnd) {
-                ot15 = (endMinutes - weekdayWorkEnd) / 60; // คำนวณรวดเดียวตั้งแต่ 17:30 จนจบ
-                ot30 = 0;                                  // ล็อกวันธรรมดา OT 3.0 เป็น 0 เสมอ
-                if (hasBreak) ot15 -= 0.5;
+                ot15 = (endMinutes - weekdayWorkEnd) / 60;
+                ot30 = 0;
+                
+                // 🍱 หักเบรกวันธรรมดา
+                if (hasBreak) ot15 -= 0.5; // หักเบรกเย็น (17:30 - 18:00) = 0.5 ชม.
             }
         }
     } else {
-        // วันนักขัตฤกษ์ / วันอาทิตย์
+        // 🟢 3. วันอาทิตย์ หรือ วันนักขัตฤกษ์
         let totalHours = (endMinutes - startMinutes) / 60;
-        if (hasBreak) totalHours -= 0.5;
 
+        // 🍱 หักเบรกวันอาทิตย์ / นักขัตฤกษ์
+        if (hasBreak) {
+            // หักเบรกเที่ยง 12:00 - 13:00 น. (1 ชม.)
+            if (startMinutes < 13 * 60 && endMinutes > 12 * 60) {
+                totalHours -= 1.0;
+            }
+            // หักเบรกเย็น 17:30 - 18:00 น. (0.5 ชม.)
+            if (startMinutes < 18 * 60 && endMinutes > 17 * 60 + 30) {
+                totalHours -= 0.5;
+            }
+        }
+
+        totalHours = Math.max(0, totalHours);
+
+        // แบ่งช่วง OT 1.5 (3.5 ชม. แรก) และ OT 3.0 (ส่วนที่เหลือ)
         if (totalHours > 3.5) {
             ot15 = 3.5;
             ot30 = totalHours - 3.5;
