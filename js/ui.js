@@ -103,6 +103,7 @@ async function handleRouting() {
     // 5. โหลดข้อมูลประจำหน้าทันทีเมื่อสลับหน้า (รอให้โหลดเสร็จก่อน)
     if (cleanHash === 'report' || cleanHash === 'report-view') {
         if (typeof renderReportTable === 'function') await renderReportTable();
+        if (typeof renderFeedbackReportTable === 'function') await renderFeedbackReportTable();
     } else if (cleanHash === 'ot' || cleanHash === 'ot-view') {
         const monthSelector = document.getElementById('monthSelector');
         const selectedMonth = monthSelector ? monthSelector.value : (typeof getCurrentOTMonth === 'function' ? getCurrentOTMonth() : 1);
