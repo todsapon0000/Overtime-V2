@@ -106,6 +106,7 @@ function calculateOTDetails() {
     let startMinutes = inH * 60 + inM;
     let endMinutes = outH * 60 + outM;
 
+    // กรณีทำงานข้ามวัน (เช่น 08:30 ถึง 01:00 น. ของวันถัดไป)
     if (endMinutes < startMinutes) endMinutes += 24 * 60;
 
     const isHoliday = otIsHoliday ? otIsHoliday.checked : false;
@@ -113,10 +114,10 @@ function calculateOTDetails() {
 
     let dayOfWeek = -1;
     if (otDateEl && otDateEl.value) {
-        // 🟢 ป้องกันเรื่อง Timezone Shift
+        // 🟢 ป้องกันเรื่อง Timezone Shift ล็อกวันที่ให้ตรงวันแน่นอน
         const [y, m, d] = otDateEl.value.split('-').map(Number);
         const dateObj = new Date(y, m - 1, d);
-        dayOfWeek = dateObj.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+        dayOfWeek = dateObj.getDay(); // 0 = อาทิตย์, 1 = จันทร์, ..., 6 = เสาร์
     }
 
     let ot15 = 0, ot30 = 0;
@@ -126,20 +127,21 @@ function calculateOTDetails() {
 
     if (!isHoliday) {
         if (dayOfWeek === 6) { 
-            // 🟢 วันเสาร์: เลิก 12:00 น. -> 12:00-24:00 คิด 1.5 / หลังเที่ยงคืน คิด 3.0
+            // 🟢 วันเสาร์: เลิก 12:00 น. -> คิด 1.5 ถึงเที่ยงคืน / หลังเที่ยงคืนคิด 3.0
             if (endMinutes > satWorkEnd) {
                 if (endMinutes > midnight) {
-                    ot15 = (midnight - satWorkEnd) / 60; // 12:00 - 24:00 = 12 ชม.
-                    ot30 = (endMinutes - midnight) / 60; // หลังเที่ยงคืน คิด 3.0
+                    ot15 = (midnight - satWorkEnd) / 60; // 12:00 - 24:00 = 12.0 ชม.
+                    ot30 = (endMinutes - midnight) / 60; // หลังเที่ยงคืนคิด 3.0
                 } else {
                     ot15 = (endMinutes - satWorkEnd) / 60;
                 }
                 if (hasBreak) ot15 -= 0.5;
             }
         } else { 
-            // 🟢 วันธรรมดา (จันทร์ - ศุกร์): เลิก 17:30 น. -> คิด 1.5 ยาวรวมถึงหลังเที่ยงคืน
+            // 🟢 วันธรรมดา (จันทร์ - ศุกร์): เลิก 17:30 น. -> คิด 1.5 ยิงยาวข้ามเที่ยงคืน (ไม่มี 3.0)
             if (endMinutes > weekdayWorkEnd) {
-                ot15 = (endMinutes - weekdayWorkEnd) / 60;
+                ot15 = (endMinutes - weekdayWorkEnd) / 60; // คำนวณรวดเดียวตั้งแต่ 17:30 จนจบ
+                ot30 = 0;                                  // ล็อกวันธรรมดา OT 3.0 เป็น 0 เสมอ
                 if (hasBreak) ot15 -= 0.5;
             }
         }
