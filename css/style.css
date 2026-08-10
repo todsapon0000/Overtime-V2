@@ -27,6 +27,16 @@ body {
         width: calc(100% - var(--sidebar-width));
         flex-grow: 1;
     }
+
+    /* ล็อกความกว้างขั้นต่ำคอลัมน์ Date ไว้ที่ 75px ให้พอดีกับคำว่า 01 Aug */
+    #otDataTable th:first-child,
+    #otDataTable td:first-child {
+        width: 100px !important;
+        min-width: 100px !important;
+        padding-left: 2px !important;
+        padding-right: 1px !important;
+        white-space: nowrap !important;
+    }
 }
 
 /* 📱 บังคับความกว้างขั้นต่ำคอลัมน์แรก (Date) ไม่ให้โดนบีบตัดเป็นจุดไข่ปลา (...) บนมือถือ */
