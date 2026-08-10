@@ -1741,7 +1741,7 @@ async function renderFeedbackReportTable() {
     }
 
     const typeBadge = {
-        'bug': '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Bug / ปัญหา</span>',
+        'bug': '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Bug</span>',
         'feature': '<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Feature ใหม่</span>',
         'other': '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">อื่นๆ</span>'
     };
@@ -1766,7 +1766,7 @@ async function renderFeedbackReportTable() {
                 <td class="text-center text-muted" style="font-size: 0.8rem;">${dateText}</td>
                 <td class="text-center">${typeBadge[item.type] || typeBadge['other']}</td>
                 <td class="text-start">${item.message || '-'}</td>
-                <td class="text-center"><span class="badge bg-warning text-dark fw-normal">Pending</span></td>
+                <td class="text-center"><span class="badge bg-warning text-dark fw-normal"></span></td>
                 <td class="text-center">${imageBtn}</td>
             </tr>
         `;
