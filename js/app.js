@@ -2012,6 +2012,7 @@ function getPayDate(year, monthIndex) {
 // ฟังก์ชันหลักสำหรับเรนเดอร์ Next Pay
 function renderNextPay() {
     const daysEl = document.getElementsByClassName('nextPayDays');
+    const dateEl = document.getElementsByClassName('nextPayDate');
     if (!daysEl && !dateEl) return;
 
     const now = new Date();
