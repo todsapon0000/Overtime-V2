@@ -195,6 +195,12 @@ footer {
     z-index: 5;
 }
 
+/* ปรับ Wrapper หลักให้ใช้ dvh (Dynamic Viewport Height) แทน vh */
+.main-content-wrapper,
+body {
+    min-height: 100dvh !important; /* 🟢 dvh จะคำนวณความสูงตามขนาดหน้าจอจริงที่หัก Toolbar ออกแล้ว */
+}
+
 /* 🟢 ดัน Container หลักของหน้าเว็บขึ้นมาป้องกันเนื้อหาโดนบัง */
 @media (max-width: 768px) {
     .main-content-wrapper,
