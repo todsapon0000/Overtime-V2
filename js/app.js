@@ -1730,63 +1730,119 @@ async function renderFeedbackReportTable() {
     const tbody = document.getElementById('feedbackReportTbody');
     if (!tbody) return;
 
-    if (typeof feedbackService === 'undefined' || typeof feedbackService.getAllFeedbacks !== 'function') return;
+    // 1. แสดง Spinner ระหว่างรอโหลด
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                กำลังโหลดรายการข้อเสนอแนะ...
+            </td>
+        </tr>
+    `;
 
-    const res = await feedbackService.getAllFeedbacks();
-    const list = res.success ? res.data : [];
-
-    if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">ยังไม่มีรายการข้อเสนอแนะในระบบ</td></tr>`;
-        return;
-    }
-
-    const typeBadge = {
-        'bug': '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Bug</span>',
-        'feature': '<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Feature ใหม่</span>',
-        'other': '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">อื่นๆ</span>'
-    };
-
-    let html = '';
-    list.forEach(item => {
-        let dateText = '-';
-        if (item.created_at) {
-            const dateObj = item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at);
-            dateText = dateObj.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+    try {
+        debugger;
+        // 🛑 2. เช็กว่าบริการ feedbackService โหลดเข้ามาในระบบหรือยัง
+        if (typeof feedbackService === 'undefined' || typeof feedbackService.getAllFeedbacks !== 'function') {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-warning py-3 small">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i> ไม่พบบริการ feedbackService (กรุณาเช็กการดึงไฟล์ js/services/feedbackService.js)
+                    </td>
+                </tr>`;
+            return;
         }
 
-        const hasImage = !!item.image_url;
-        const imageBtn = hasImage ? `
-            <button class="btn btn-sm btn-outline-primary py-0 px-2 btn-view-image" data-img="${item.image_url}" style="font-size: 0.75rem;">
-                <i class="fa-solid fa-image me-1"></i>
-            </button>
-        ` : `<span class="text-muted small">-</span>`;
+        // 3. ยิงดึงข้อมูลจาก Firebase
+        const res = await feedbackService.getAllFeedbacks();
 
-        html += `
-            <tr>
-                <td class="text-center text-muted" style="font-size: 0.8rem;">${dateText}</td>
-                <td class="text-center">${typeBadge[item.type] || typeBadge['other']}</td>
-                <td class="text-start">${item.message || '-'}</td>
-                <td class="text-center"><span class="badge bg-warning text-dark fw-normal"></span></td>
-                <td class="text-center">${imageBtn}</td>
-            </tr>
-        `;
-    });
+        if (!res.success) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-danger py-3 small">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> ไม่สามารถดึงข้อมูลได้: ${res.error || 'ไม่ทราบสาเหตุ'}
+                    </td>
+                </tr>`;
+            return;
+        }
 
-    tbody.innerHTML = html;
+        const list = res.data || [];
+        debugger;
 
-    tbody.querySelectorAll('.btn-view-image').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const imgUrl = this.getAttribute('data-img');
-            const previewImg = document.getElementById('previewImageSrc');
-            const modalEl = document.getElementById('imagePreviewModal');
+        // 4. กรณีไม่มีข้อมูลในระบบ
+        if (list.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4 small">
+                        <i class="fa-solid fa-inbox me-1"></i> ยังไม่มีรายการข้อเสนอแนะในระบบ
+                    </td>
+                </tr>`;
+            return;
+        }
 
-            if (previewImg && modalEl) {
-                previewImg.src = imgUrl;
-                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modal.show();
+        // 5. ปรับ Badge สีตามประเภท
+        const typeBadge = {
+            'bug': '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Bug / ปัญหา</span>',
+            'feature': '<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Feature ใหม่</span>',
+            'other': '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">อื่นๆ</span>'
+        };
+
+        // 6. สร้าง HTML วาดลงตาราง
+        let html = '';
+        list.forEach(item => {
+            let dateText = '-';
+            if (item.created_at) {
+                const dateObj = item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at);
+                dateText = dateObj.toLocaleDateString('th-TH', { 
+                    day: '2-digit', month: 'short', year: '2-digit', 
+                    hour: '2-digit', minute: '2-digit' 
+                });
             }
+
+            const hasImage = !!item.image_url;
+            const imageBtn = hasImage ? `
+                <button class="btn btn-sm btn-outline-primary py-0 px-2 btn-view-image" data-img="${item.image_url}" style="font-size: 0.75rem;">
+                    <i class="fa-solid fa-image me-1"></i>
+                </button>
+            ` : `<span class="text-muted small">-</span>`;
+
+            html += `
+                <tr>
+                    <td class="text-center text-muted" style="font-size: 0.8rem;">${dateText}</td>
+                    <td class="text-center">${typeBadge[item.type] || typeBadge['other']}</td>
+                    <td class="text-start">${item.message || '-'}</td>
+                    <td class="text-center"><span class="badge bg-warning text-dark fw-normal"></span></td>
+                    <td class="text-center">${imageBtn}</td>
+                </tr>
+            `;
         });
-    });
+
+        tbody.innerHTML = html;
+
+        // 7. ผูก Event ปุ่มกดดูรูป
+        tbody.querySelectorAll('.btn-view-image').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const imgUrl = this.getAttribute('data-img');
+                const previewImg = document.getElementById('previewImageSrc');
+                const modalEl = document.getElementById('imagePreviewModal');
+
+                if (previewImg && modalEl) {
+                    previewImg.src = imgUrl;
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                }
+            });
+        });
+
+    } catch (err) {
+        console.error("Render Feedback Table Error:", err);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-danger py-3 small">
+                    เกิดข้อผิดพลาดของระบบ: ${err.message}
+                </td>
+            </tr>`;
+    }
 }
 
 function initReportView() {
