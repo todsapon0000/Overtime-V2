@@ -310,7 +310,7 @@ async function renderOTTable(selectedMonth) {
             <table id="otDataTable" class="table table-hover table-striped align-middle text-center mb-0 w-100 border custom-border-table">
                 <thead class="table-light text-muted small align-middle">
                     <tr>
-                        <th rowspan="2" class="text-start align-middle" style="width: 10%;">
+                        <th rowspan="2" class="text-center align-middle" style="width: 12%;">
                             <input type="text" id="dateSearchInput" class="form-control border-start-0 ps-0 fw-bold text-muted" 
                                    placeholder=" Date" style="font-size: 0.85rem; box-shadow: none; background-color: transparent;">
                         </th>
@@ -383,7 +383,7 @@ async function renderOTTable(selectedMonth) {
 
             tableHTML += `
                 <tr class="${trClass}">
-                    <td class="text-start fw-bold text-nowrap" style="font-size: 0.8rem;">${dateStr}</td>
+                    <td class="text-center fw-bold text-nowrap" style="font-size: 0.8rem;">${dateStr}</td>
                     <td class="text-muted" style="font-size: 0.65rem;">${inTime}</td>
                     <td class="text-muted" style="font-size: 0.65rem;">${outTime}</td>
                     <td class="text-muted d-none d-lg-table-cell">${ot15H}</td>
