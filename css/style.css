@@ -50,6 +50,35 @@ body {
     }
 }
 
+/* 💻 สไตล์คืนค่าฟอนต์และระยะห่างตารางให้เป็นขนาดปกติบนหน้าจอใหญ่ (Desktop / Tablet) */
+@media (min-width: 769px) {
+
+    /* 1. คืนขนาดตัวอักษรของตาราง หัวตาราง และคอลัมน์วันที่ ให้เป็นขนาดปกติ */
+    #otDataTable th,
+    #otDataTable td,
+    #otDataTable th:first-child,
+    #otDataTable td:first-child {
+        width: auto !important;
+        font-size: 0.875rem !important; /* ขนาดฟอนต์ปกติมาตรฐาน Bootstrap */
+        padding: 0.5rem 0.5rem !important; /* คืนค่าระยะห่างขอบช่องตาราง */
+        letter-spacing: normal !important; /* คืนค่าระยะห่างตัวอักษรปกติ */
+    }
+
+    /* 2. คืนขนาดฟอนต์ของตัวเลขเวลา In, Out, ชั่วโมง และยอดเงิน ให้ใหญ่และชัดเจน */
+    #otDataTable tbody td span {
+        font-size: 0.85rem !important;
+        letter-spacing: normal !important;
+    }
+
+    /* 3. จัดสัดส่วนความกว้างคอลัมน์ให้อ่านง่าย สบายตาบนจอใหญ่ */
+    #otDataTable th:nth-child(1), #otDataTable td:nth-child(1) { width: 16% !important; } /* Date */
+    #otDataTable th:nth-child(2), #otDataTable td:nth-child(2) { width: 9% !important; }  /* In */
+    #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) { width: 9% !important; }  /* Out */
+    #otDataTable th:nth-child(8), #otDataTable td:nth-child(8) { width: 8% !important; }  /* ชม. */
+    #otDataTable th:nth-child(9), #otDataTable td:nth-child(9) { width: 14% !important; } /* บาท */
+    #otDataTable th:nth-child(10), #otDataTable td:nth-child(10) { width: 60px !important; } /* Action */
+}
+
 /* 📱 ปิดการเลื่อนซ้าย-ขวา บังคับตารางให้อยู่ในหน้าจอ 100% */
 .table-responsive {
     overflow-x: hidden !important; /* ⚡ ปิดการเลื่อนซ้าย-ขวาเด็ดขาด */
