@@ -29,24 +29,43 @@ body {
     }
 }
 
-/* 📱 บังคับความกว้างขั้นต่ำคอลัมน์แรก (Date) ไม่ให้โดนบีบตัดเป็นจุดไข่ปลา (...) บนมือถือ */
+/* 📱 สไตล์สำหรับหน้าจอมือถือโดยเฉพาะ (ความกว้างไม่เกิน 768px) */
 @media (max-width: 768px) {
-    /* ล็อกความกว้างขั้นต่ำคอลัมน์ Date ไว้ที่ 75px ให้พอดีกับคำว่า 01 Aug */
-    #otDataTable th:first-child,
-    #otDataTable td:first-child {
-        width: 40px !important;
-        min-width: 40px !important;
-        font-size: 0.72rem !important;
-        padding-left: 2px !important;
-        padding-right: 1px !important;
-        white-space: nowrap !important;
+
+    /* 🟢 1. บังคับย่อขนาดตัวอักษรและ Padding ของหัวตาราง (th) และเนื้อหา (td) ทุกช่อง */
+    #otDataTable th,
+    #otDataTable td {
+        font-size: 0.68rem !important;
+        padding: 0.25rem 0.1rem !important;
+        letter-spacing: -0.2px !important;
     }
 
-    /* ย่อช่อง In/Out ลงเล็กน้อยเพื่อคืนพื้นที่ให้คอลัมน์อื่น */
+    /* 🟢 2. เจาะจงย่อฟอนต์ตัวเลขเวลา In/Out, ชั่วโมง และยอดเงิน ที่อยู่ในแท็ก <span> */
+    #otDataTable tbody td span {
+        font-size: 0.65rem !important;
+        letter-spacing: -0.3px !important;
+    }
+
+    /* 🟢 3. คอลัมน์แรก (Date) - ขยาย/หด อัตโนมัติตามขนาดวันที่ ไม่ตัดคำ */
+    #otDataTable th:first-child,
+    #otDataTable td:first-child {
+        width: 1% !important;
+        white-space: nowrap !important;
+        font-size: 0.70rem !important;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    /* 🟢 4. ย่อช่อง In และ Out ให้กระชับ */
     #otDataTable th:nth-child(2), #otDataTable td:nth-child(2),
     #otDataTable th:nth-child(3), #otDataTable td:nth-child(3) {
-        width: 45px !important;
-        min-width: 45px !important;
+        width: 42px !important;
+        min-width: 42px !important;
+    }
+
+    /* 🟢 5. ย่อขนาดตัวอักษรในช่องค้นหา Date ตรงหัวตาราง */
+    #dateSearchInput {
+        font-size: 0.62rem !important;
     }
 }
 
