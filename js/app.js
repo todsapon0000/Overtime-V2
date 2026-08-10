@@ -549,6 +549,7 @@ function initOTManagement() {
 
     const btnDeleteOT = document.getElementById('btnDeleteOT');
     if (btnDeleteOT) {
+        // 🟢 ดัก Event การคลิกที่ปุ่มลบ
         $(btnDeleteOT).off('click').on('click', async function(e) {
             e.preventDefault();
 
@@ -599,58 +600,32 @@ function initOTManagement() {
             if (overlayEl) overlayEl.remove();
             btnDeleteOT.disabled = false;
 
-            // 🟢 6. ฟังก์ชันปิด Modal แบบปลอดภัย ไม่เกิด Error Focus ค้าง
-            const hideModalAsync = (modalEl) => {
-                return new Promise((resolve) => {
-                    if (!modalEl || !modalEl.classList.contains('show')) {
-                        resolve();
-                        return;
-                    }
-
-                    let resolved = false;
-                    const cleanup = () => {
-                        if (!resolved) {
-                            resolved = true;
-                            modalEl.removeEventListener('hidden.bs.modal', cleanup);
-                            resolve();
-                        }
-                    };
-
-                    modalEl.addEventListener('hidden.bs.modal', cleanup);
-
-                    if (document.activeElement && typeof document.activeElement.blur === 'function') {
-                        document.activeElement.blur();
-                    }
-
-                    const modalInstance = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    } else {
-                        cleanup();
-                    }
-
-                    // Safety Timeout 350ms ป้องกัน Event ปิดหลุด
-                    setTimeout(cleanup, 350);
-                });
-            };
-
+            // 🟢 6. จัดการปิด Modal และรอให้ Bootstrap ปิดสมบูรณ์ 100% ก่อนทำงานต่อ (แก้ Error focus สีแดง)
             const otModalEl = document.getElementById('otModal');
-            
-            // ⚡ ปิด Modal ให้เรียบร้อย 100% ก่อนทำขั้นตอนถัดไป
-            await hideModalAsync(otModalEl);
+            if (otModalEl) {
 
-            // 🟢 7. เมื่อ Modal ปิดสนิทแล้ว ทำการอัปเดตตารางและแจ้งเตือนทันที
-            if (result && result.success) {
-                const monthSelector = document.getElementById('monthSelector');
-                const selectedM = monthSelector ? monthSelector.value : getCurrentOTMonth();
-                
-                if (typeof renderOTTable === 'function') {
-                    await renderOTTable(selectedM);
+                // ⚡ ดักฟัง Event 'hidden.bs.modal' (ทำงานเมื่อ Modal แรกปิดสนิท ไร้ Animation ค้าง)
+                $(otModalEl).one('hidden.bs.modal', async function () {
+                    if (result && result.success) {
+                        const monthSelector = document.getElementById('monthSelector');
+                        const selectedM = monthSelector ? monthSelector.value : getCurrentOTMonth();
+                        
+                        // รีโหลดตารางทันทีหลัง Modal ปิดสนิท
+                        if (typeof renderOTTable === 'function') {
+                            await renderOTTable(selectedM);
+                        }
+
+                        showNotification(`ลบรายการ OT วันที่ ${targetDate} เรียบร้อยแล้วครับ!`, 'success');
+                    } else {
+                        showNotification("เกิดข้อผิดพลาดในการลบข้อมูล: " + (result?.error || "ไม่ทราบสาเหตุ"), 'error');
+                    }
+                });
+
+                // สั่งปิด Modal
+                const modalInstance = bootstrap.Modal.getInstance(otModalEl) || bootstrap.Modal.getOrCreateInstance(otModalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
                 }
-
-                showNotification(`ลบรายการ OT วันที่ ${targetDate} เรียบร้อยแล้วครับ!`, 'success');
-            } else {
-                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล: " + (result?.error || "ไม่ทราบสาเหตุ"), 'error');
             }
         });
     }
