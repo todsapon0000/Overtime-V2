@@ -1908,6 +1908,42 @@ document.addEventListener('submit', async (e) => {
 }, true);
 
 
+// 🟢 ฟังก์ชันย่อขนาดรูปภาพอัตโนมัติตอนแนบรูป Feedback (ลดขนาดรูปให้เหลือไม่เกิน 200KB)
+function compressImageToBase64(file, maxWidth = 800, quality = 0.6) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // คำนวณสัดส่วนความกว้างไม่เกิน maxWidth (800px)
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // บีบอัดไฟล์เป็น JPEG คุณภาพ 60%
+                const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedBase64);
+            };
+            img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+    });
+}
+
+
 // ==========================================
 // 🔔 Helper: Universal Popup Notification (Modal Style)
 // ==========================================
