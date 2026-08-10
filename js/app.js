@@ -1793,6 +1793,101 @@ function initReportView() {
     renderFeedbackReportTable();
 }
 
+// 🟢 สคริปต์จัดการ Modal ของ Admin (กรองเฉพาะรายการที่ยังไม่ Success)
+function initAdminFeedbackSystem() {
+    const btnAdmin = document.getElementById('btnAdminFeedback');
+    const modalEl = document.getElementById('adminFeedbackModal');
+    const feedbackSelect = document.getElementById('adminFeedbackSelect');
+    const statusSelect = document.getElementById('adminStatusSelect');
+    const form = document.getElementById('adminFeedbackForm');
+
+    if (!btnAdmin || !modalEl) return;
+
+    let currentFeedbackList = [];
+
+    // 1. กดปุ่ม "For admin"
+    btnAdmin.addEventListener('click', async () => {
+        feedbackSelect.innerHTML = '<option value="">กำลังดึงรายการ Feedback...</option>';
+        
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+
+        // ดึงรายการปัญหาทั้งหมดจาก Firebase
+        const res = await feedbackService.getAllFeedbacks();
+        if (res.success && res.data.length > 0) {
+            
+            // 🟢 กรองเฉพาะรายการที่สถานะยังไม่ใช่ 'success' (ตัดรายการที่ Success ออกไป)
+            currentFeedbackList = res.data.filter(item => {
+                const status = (item.status || 'pending').toLowerCase();
+                return status !== 'success' && status !== 'completed' && status !== 'done';
+            });
+
+            if (currentFeedbackList.length > 0) {
+                let options = '<option value="">-- เลือกรายการปัญหา / Feedback --</option>';
+
+                currentFeedbackList.forEach(item => {
+                    const msgShort = item.message ? (item.message.length > 35 ? item.message.substring(0, 35) + '...' : item.message) : 'ไม่มีข้อความ';
+                    options += `<option value="${item.id}">[⏳ Pending] ${msgShort}</option>`;
+                });
+
+                feedbackSelect.innerHTML = options;
+            } else {
+                feedbackSelect.innerHTML = '<option value="">ไม่มีรายการค้างดำเนินการ (Success หมดแล้ว)</option>';
+            }
+        } else {
+            feedbackSelect.innerHTML = '<option value="">ไม่มีรายการ Feedback ในระบบ</option>';
+        }
+    });
+
+    // 2. เมื่อ Admin เลือกรายการปัญหา
+    if (feedbackSelect) {
+        feedbackSelect.addEventListener('change', function() {
+            const selectedId = this.value;
+            const selectedItem = currentFeedbackList.find(item => item.id === selectedId);
+            if (selectedItem && statusSelect) {
+                statusSelect.value = (selectedItem.status || 'pending').toLowerCase();
+            }
+        });
+    }
+
+    // 3. กด Submit บันทึกสถานะใหม่ลง Firebase
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedId = feedbackSelect.value;
+            const newStatus = statusSelect.value;
+
+            if (!selectedId) {
+                showNotification('กรุณาเลือกรายการ Feedback ที่ต้องการเปลี่ยนสถานะครับ', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('btnSubmitAdminStatus');
+            if (submitBtn) submitBtn.disabled = true;
+
+            // ยิงไปอัปเดตลง Firebase
+            const res = await feedbackService.updateFeedbackStatus(selectedId, newStatus);
+
+            if (submitBtn) submitBtn.disabled = false;
+
+            if (res.success) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                showNotification('อัปเดตสถานะบน Firebase เรียบร้อยแล้วครับ!', 'success');
+
+                // รีโหลดตาราง Feedback บนหน้า Report ทันที
+                if (typeof renderFeedbackReportTable === 'function') {
+                    renderFeedbackReportTable();
+                }
+            } else {
+                showNotification('เกิดข้อผิดพลาดในการอัปเดต: ' + res.error, 'error');
+            }
+        });
+    }
+}
+
 // ------------------------------------------
 // 💬 Feedback System
 // ------------------------------------------
