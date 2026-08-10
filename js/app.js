@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     renderHomeSummary();
     renderNextPay();
+    initAdminFeedbackSystem();
 
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
